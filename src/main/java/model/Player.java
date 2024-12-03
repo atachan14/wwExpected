@@ -11,6 +11,8 @@ public class Player {
 	int num;
 	String name;
 	Role co;
+	
+	boolean alive =true;
 
 	float villsPer;
 	Map<Role, Float> rolePerMap = new HashMap<>();

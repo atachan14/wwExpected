@@ -1,7 +1,5 @@
 package model.logic;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import model.Player;
 import model.SessionBoard;
 import model.SessionRegulation;
@@ -12,18 +10,16 @@ public class CalcPer {
 	private SessionBoard sb;
 	private float latentWWs;
 
-	public CalcPer(HttpServletRequest request) {
-		this.sr = (SessionRegulation) request.getSession().getAttribute("sr");
-		this.sb = (SessionBoard) request.getSession().getAttribute("sb");
+	public CalcPer(SessionRegulation sr,SessionBoard sb) {
+		this.sr = sr;
+		this.sb = sb;
 	}
 
 	public void updateVillsPer() {
 		latentWWs = sr.getWwsList().size();
-		System.out.println("1."+latentWWs);
 		updateCoTruePer();
 		updateNotCoVillsPer();
 		updateWwsPer();
-		System.out.println("2."+latentWWs);
 	}
 
 	public void updateCoTruePer() {

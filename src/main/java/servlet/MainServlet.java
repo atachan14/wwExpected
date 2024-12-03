@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import model.SessionBoard;
-import model.SessionRegulation;
 import model.logic.CalcPer;
 
 /**
@@ -35,8 +33,6 @@ public class MainServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		getCp(request).updateVillsPer();
-
 		request.getRequestDispatcher(PATH_main).forward(request, response);
 	}
 
@@ -53,14 +49,7 @@ public class MainServlet extends HttpServlet {
 		
 	}
 
-	SessionRegulation getSr(HttpServletRequest request) {
-		return (SessionRegulation) request.getSession().getAttribute("sr");
-
-	}
-
-	SessionBoard getSb(HttpServletRequest request) {
-		return (SessionBoard) request.getSession().getAttribute("sb");
-	}
+	
 
 	CalcPer getCp(HttpServletRequest request) {
 		return (CalcPer) request.getSession().getAttribute("cp");

@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import model.SessionBoard;
 import model.SessionRegulation;
-import model.logic.CalcPer;
 
 /**
  * Servlet implementation class Entrance
@@ -46,8 +45,8 @@ public class TopServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub		
 		request.getSession().setAttribute("sr",new SessionRegulation(request));
-		request.getSession().setAttribute("sb",new SessionBoard(request));
-		request.getSession().setAttribute("cp", new CalcPer(request));
+		request.getSession().setAttribute("d1",new SessionBoard(request));
+	
 		response.sendRedirect("main");
 
 	}

@@ -8,19 +8,26 @@ import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import model.logic.CalcPer;
 import model.role.person.Role;
 
 public class SessionBoard {
 	SessionRegulation sr;
+	CalcPer cp;
+	
 	List<Player> playerList = new ArrayList<Player>();
 	Map<Role, List<Player>> coPlayerMap = new LinkedHashMap<>();
 	List<Player> notCoPlayerList = new ArrayList<Player>();
+	
+	List<SessionBoard> nextSbList = new ArrayList<SessionBoard>();
 
 	public SessionBoard(HttpServletRequest request) {
 		this.sr = (SessionRegulation) request.getSession().getAttribute("sr");
+		this.cp = new CalcPer(sr,this);
 		criatePlayerList();
 		criateCoPlayerMap();
 		criateNotCoPlayerList();
+		cp.updateVillsPer();
 	}
 
 	void criatePlayerList() {
