@@ -3,7 +3,6 @@ package model.logic;
 import model.Player;
 import model.SessionBoard;
 import model.SessionRegulation;
-import model.role.person.Role;
 
 public class CalcPer {
 	private SessionRegulation sr;
@@ -23,7 +22,7 @@ public class CalcPer {
 	}
 
 	public void updateCoTruePer() {
-		for (Role co : sb.getCoPlayerMap().keySet()) {
+		for (String co : sb.getCoPlayerMap().keySet()) {
 			if (sb.getCoPlayerMap().get(co).size() >= sr.getRoleSizeMap().get(co)) {
 				latentWWs -= sb.getCoPlayerMap().get(co).size() - sr.getRoleSizeMap().get(co);
 
