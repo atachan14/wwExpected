@@ -7,7 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import model.Fase;
 import model.SessionBoard;
 import model.SessionRegulation;
 
@@ -44,8 +44,10 @@ public class TopServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub		
-		request.getSession().setAttribute("sr",new SessionRegulation(request));
-		request.getSession().setAttribute("d1",new SessionBoard(request));
+		SessionRegulation sr = new SessionRegulation(request);
+		Fase fase = new Fase("d",1);
+		request.getSession().setAttribute("sr",sr);
+		request.getSession().setAttribute("d1",new SessionBoard(fase));
 	
 		response.sendRedirect("main");
 

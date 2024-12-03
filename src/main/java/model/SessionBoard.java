@@ -6,27 +6,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.http.HttpServletRequest;
 import model.logic.CalcPer;
 import model.role.person.Role;
 
 public class SessionBoard {
-	SessionRegulation sr;
+	static SessionRegulation sr;
 	CalcPer cp;
-	
+	Fase fase;
+
+	boolean villsWin = false;
+	boolean wwsWin = false;
+
 	List<Player> playerList = new ArrayList<Player>();
-	Map<Role, List<Player>> coPlayerMap = new LinkedHashMap<>();
-	List<Player> notCoPlayerList = new ArrayList<Player>();
-	
+	Map<Role, List<Player>> coPlayerListMap = new LinkedHashMap<>();
+	List<Player> latentPlayerList = new ArrayList<Player>();
+	List<Player> alivePlayerList = new ArrayList<Player>();
+
 	List<SessionBoard> nextSbList = new ArrayList<SessionBoard>();
 
-	public SessionBoard(HttpServletRequest request) {
-		this.sr = (SessionRegulation) request.getSession().getAttribute("sr");
-		this.cp = new CalcPer(sr,this);
+	public SessionBoard(Fase fase) {
+		this.cp = new CalcPer(sr, this);
+		this.fase = fase;
 		criatePlayerList();
-		criateCoPlayerMap();
-		criateNotCoPlayerList();
+		criateCoPlayerListMap();
+		criateLatentPlayerList();
+
+		criateNextSbList();
 		cp.updateVillsPer();
+	}
+
+	public SessionBoard() {
+
 	}
 
 	void criatePlayerList() {
@@ -34,25 +44,27 @@ public class SessionBoard {
 			playerList.add(new Player(i, sr.getRoleSizeMap()));
 		}
 	}
-	
-	void criateCoPlayerMap() {
+
+	void criateCoPlayerListMap() {
 		for (Role canCo : sr.roleSizeMap.keySet()) {
-			coPlayerMap.put(canCo, new ArrayList<>());
+			coPlayerListMap.put(canCo, new ArrayList<>());
 		}
 	}
-	
-	void criateNotCoPlayerList() {
-		for(Player player : playerList) {
-			notCoPlayerList.add(player);
+
+	void criateLatentPlayerList() {
+		for (Player player : playerList) {
+			latentPlayerList.add(player);
 		}
+	}
+
+	void criateNextSbList() {
+
 	}
 
 	void updateCoPlayerMap() {
-		coPlayerMap = playerList.stream().collect(Collectors.groupingBy(Player::getCo));
+		coPlayerListMap = playerList.stream().collect(Collectors.groupingBy(Player::getCo));
 	}
 
-	
-	
 	public CalcPer getCp() {
 		return cp;
 	}
@@ -62,11 +74,15 @@ public class SessionBoard {
 	}
 
 	public Map<Role, List<Player>> getCoPlayerMap() {
-		return coPlayerMap;
+		return coPlayerListMap;
 	}
 
 	public List<Player> getNotCoPlayerList() {
-		return notCoPlayerList;
+		return latentPlayerList;
+	}
+
+	public void setSr(SessionRegulation SR) {
+		sr = SR;
 	}
 
 }

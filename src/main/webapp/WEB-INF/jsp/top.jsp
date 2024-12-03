@@ -10,7 +10,7 @@
 </head>
 <body>
 	<form action="top" method="post">
-		<input type="submit" value="simulation"><br>
+		<input type="submit" value="go"><br>
 		<c:forEach var="key" items="${appRoleMap.keySet()}">
 			<c:out value="${key}" />:
 			<input type="number" name="${key}" style="width: 30px;">

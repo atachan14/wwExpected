@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import model.role.person.Role;
 
 public class SessionRegulation {
@@ -31,11 +30,14 @@ public class SessionRegulation {
 
 	void criateRoles(HttpServletRequest request) {
 		for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
-			if (entry.getValue()[0] == null || entry.getValue()[0] == "0") {
-				continue;
-			}
+			String key = entry.getKey();
+			String value =entry.getValue()[0];
+			if (value == null || value.isEmpty() || value.equals("0")) {
+	            continue; // 空文字、null、または"0"をスキップ
+	        }
+			System.out.println(entry.getKey() + ":" + value);
 
-			Role role = RoleFactory.createRole(entry.getKey());
+			Role role = RoleFactory.createRole(key);
 			int size = Integer.parseInt(entry.getValue()[0]);
 
 			roleSizeMap.put(role, size);
