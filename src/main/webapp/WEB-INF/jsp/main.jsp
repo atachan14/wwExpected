@@ -31,8 +31,8 @@
 							<option value="${key.name}">${key.name}</option>
 						</c:forEach>
 				</select></td>
-				<td>${cp.perToJsp(sb.playerList.get(i).villsPer)}</td>
-				<td>${cp.perToJsp(sb.playerList.get(i).wwsPer)}</td>
+				<td>${d1.cp.perToJsp(d1.playerList.get(i).villsPer)}</td>
+				<td>${d1.cp.perToJsp(d1.playerList.get(i).wwsPer)}</td>
 				<td></td>
 				<td></td>
 			</tr>

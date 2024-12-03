@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import model.logic.CalcPer;
 import model.role.person.Role;
 
@@ -50,6 +49,12 @@ public class SessionBoard {
 
 	void updateCoPlayerMap() {
 		coPlayerMap = playerList.stream().collect(Collectors.groupingBy(Player::getCo));
+	}
+
+	
+	
+	public CalcPer getCp() {
+		return cp;
 	}
 
 	public List<Player> getPlayerList() {

@@ -11,8 +11,8 @@ public class Player {
 	int num;
 	String name;
 	Role co;
-	
-	boolean alive =true;
+
+	boolean alive = true;
 
 	float villsPer;
 	Map<Role, Float> rolePerMap = new HashMap<>();
@@ -28,6 +28,10 @@ public class Player {
 		for (Role canCo : roleMap.keySet()) {
 			rolePerMap.put(canCo, 0f);
 		}
+	}
+
+	public String perTj(float value) {
+		return String.format("%.1f", value * 100);
 	}
 
 	public String getMainDisplay() {
