@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import model.role.person.Role;
 
 public class SessionRegulation {
@@ -24,6 +25,7 @@ public class SessionRegulation {
 	String outWWs = "";
 
 	public SessionRegulation(HttpServletRequest request) {
+		SessionBoard.setSr(this);
 		criateRoles(request);
 		criateCamps();
 	}
