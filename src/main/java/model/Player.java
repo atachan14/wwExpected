@@ -10,12 +10,12 @@ public class Player {
 
 	int num;
 	String name;
-	String co;
+	Role co;
 	
 	boolean alive =true;
 
 	float villsPer;
-	Map<String, Float> rolePerMap = new HashMap<>();
+	Map<Role, Float> rolePerMap = new HashMap<>();
 	float wwsPer;
 	float wPer;
 	float kPer;
@@ -25,8 +25,8 @@ public class Player {
 
 	public Player(int i, Map<Role, Integer> roleMap) {
 		num = i + 1;
-		for (Role canRole : roleMap.keySet()) {
-			rolePerMap.put(canRole.getName(), 0f);
+		for (Role canCo : roleMap.keySet()) {
+			rolePerMap.put(canCo, 0f);
 		}
 	}
 
@@ -42,7 +42,7 @@ public class Player {
 		return name;
 	}
 
-	public String getCo() {
+	public Role getCo() {
 		return co;
 	}
 
@@ -50,7 +50,7 @@ public class Player {
 		return villsPer;
 	}
 
-	public Map<String, Float> getRolePerMap() {
+	public Map<Role, Float> getRolePerMap() {
 		return rolePerMap;
 	}
 
@@ -86,7 +86,7 @@ public class Player {
 		this.name = name;
 	}
 
-	public void setCo(String co) {
+	public void setCo(Role co) {
 		this.co = co;
 	}
 
@@ -94,7 +94,7 @@ public class Player {
 		this.villsPer = villsPer;
 	}
 
-	public void setRolePerMap(Map<String, Float> rolePerMap) {
+	public void setRolePerMap(Map<Role, Float> rolePerMap) {
 		this.rolePerMap = rolePerMap;
 	}
 

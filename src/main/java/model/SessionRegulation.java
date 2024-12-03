@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
-import model.role.child.Latent;
+
 import model.role.person.Role;
 
 public class SessionRegulation {
@@ -39,12 +39,11 @@ public class SessionRegulation {
 			int size = Integer.parseInt(entry.getValue()[0]);
 
 			roleSizeMap.put(role, size);
-			
+
 			for (int i = 0; i < size; i++) {
 				roleList.add(role);
 			}
 		}
-		roleSizeMap.put(new Latent(), 0);
 
 		// debug用
 		System.out.print("list:");
