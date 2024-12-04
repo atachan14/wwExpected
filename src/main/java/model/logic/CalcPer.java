@@ -1,16 +1,22 @@
 package model.logic;
 
+import java.io.Serializable;
+
+import model.FaseBoard;
 import model.Player;
-import model.SessionBoard;
 import model.SessionRegulation;
 
-public class CalcPer {
+public class CalcPer implements Serializable{
 	private static SessionRegulation sr;
-	private SessionBoard sb;
+	private FaseBoard fb;
 	private float latentWWs;
+	
+	public CalcPer() {
+		
+	}
 
-	public CalcPer(SessionBoard sb) {
-		this.sb = sb;
+	public CalcPer(FaseBoard sb) {
+		this.fb = sb;
 	}
 
 	public void updateVillsPer() {
@@ -20,15 +26,15 @@ public class CalcPer {
 	}
 
 	public void updateLatentPlayerPer() {
-		float wwsPer = latentWWs / sb.getLatentPlayerList().size();
+		float wwsPer = latentWWs / fb.getLatentPlayerList().size();
 		float villsPer = 1 - wwsPer;
-		for (Player notCoPlayer : sb.getLatentPlayerList()) {
+		for (Player notCoPlayer : fb.getLatentPlayerList()) {
 			notCoPlayer.setVillsPer(villsPer);
 		}
 	}
 
 	public void updateWwsPer() {
-		for (Player player : sb.getPlayerList()) {
+		for (Player player : fb.getPlayerList()) {
 			player.setWwsPer(1 - player.getVillsPer());
 		}
 	}

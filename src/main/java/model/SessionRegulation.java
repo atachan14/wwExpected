@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,30 +10,34 @@ import jakarta.servlet.http.HttpServletRequest;
 import model.logic.CalcPer;
 import model.role.person.Role;
 
-public class SessionRegulation {
-	List<Role> roleList = new ArrayList<>();
-	List<Role> villsList = new ArrayList<>();
-	List<Role> wwsList = new ArrayList<>();
+public class SessionRegulation implements Serializable{
+	private List<Role> roleList = new ArrayList<>();
+	private List<Role> villsList = new ArrayList<>();
+	private List<Role> wwsList = new ArrayList<>();
 	//(市民,市民,市民,狼,狼...)
-	List<Role> canCoList = new ArrayList<>();
+	private List<Role> canCoList = new ArrayList<>();
 	
-	Map<Role, Integer> roleSizeMap = new LinkedHashMap<>();
-	Map<Role, Integer> villsRoleSizeMap = new LinkedHashMap<>();
-	Map<Role, Integer> wwsRoleSizeMap = new LinkedHashMap<>();
+	private Map<Role, Integer> roleSizeMap = new LinkedHashMap<>();
+	private Map<Role, Integer> villsRoleSizeMap = new LinkedHashMap<>();
+	private Map<Role, Integer> wwsRoleSizeMap = new LinkedHashMap<>();
 	//(市民3,狼2...)
 	
 
-	String outRegulation = "";
-	String outVills = "";
-	String outWWs = "";
+	private String outRegulation = "";
+	private String outVills = "";
+	private String outWWs = "";
 
 	public SessionRegulation(HttpServletRequest request) {
-		SessionBoard.setSr(this);
+		FaseBoard.setSr(this);
 		CalcPer.setSr(this);
 		Cog.setSr(this);
 		
 		criateRoles(request);
 		criateCamps();
+	}
+	
+	public SessionRegulation() {
+		
 	}
 
 	void criateRoles(HttpServletRequest request) {

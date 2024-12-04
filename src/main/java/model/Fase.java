@@ -1,8 +1,14 @@
 package model;
 
-public class Fase {
+import java.io.Serializable;
+
+public class Fase implements Serializable{
 	String zone;
 	int day;
+	
+	public Fase() {
+		
+	}
 
 	public Fase(String zone, int day) {
 		this.zone = zone;

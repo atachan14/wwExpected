@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,39 +10,57 @@ import java.util.stream.Collectors;
 import model.logic.CalcPer;
 import model.role.person.Role;
 
-public class SessionBoard {
+public class FaseBoard implements Serializable {
 	static SessionRegulation sr;
 	CalcPer cp;
 	Fase fase;
 
 	boolean villsWin = false;
 	boolean wwsWin = false;
+	int maxWws;
 
 	List<Player> playerList = new ArrayList<Player>();
-	
-	Map<Role,Cog> cogMap = new LinkedHashMap<>();
+
+	Map<Role, Cog> cogMap = new LinkedHashMap<>();
 	List<Player> latentPlayerList = new ArrayList<Player>();
 	List<Player> alivePlayerList;
 	int aliveWws;
 
-	List<SessionBoard> nextSbList;
+	List<FaseBoard> nextFbList;
 
-	public SessionBoard(Fase fase) {
+	public FaseBoard() {
+
+	}
+
+	public FaseBoard(Fase fase) {
 		this.fase = fase;
 		this.cp = new CalcPer(this);
+		
 		criatePlayerList();
 		criateCogMap();
+		countWws();
 		criateLatentPlayerList();
 
 		cp.updateVillsPer();
-//		checkEnd();
+		//		checkEnd();
 
-//		if (!villsWin && !wwsWin) {
-//			criateNextSbList();
-//		}
+		//		if (!villsWin && !wwsWin) {
+		//			criateNextSbList();
+		//		}
+	}
+	
+	
+	void countWws() {
+		maxWws = sr.getWwsList().size();
+		aliveWws = maxWws;
+		
+		for(Role role : cogMap.keySet()) {
+			aliveWws -= cogMap.get(role).getConfDeadWws();
+		}
+		
 	}
 
-	public SessionBoard(Fase fase, Player exedPlayer, Fase beforFase) {
+	public FaseBoard(Fase fase, Player exedPlayer, Fase beforFase) {
 		this.fase = fase;
 
 	}
@@ -51,7 +70,7 @@ public class SessionBoard {
 		case "d":
 			Fase nextFase = new Fase("n", fase.getDay());
 			for (Player p : alivePlayerList) {
-				nextSbList.add(new SessionBoard(nextFase, p, fase));
+				nextFbList.add(new FaseBoard(nextFase, p, fase));
 			}
 		}
 	}
@@ -77,8 +96,8 @@ public class SessionBoard {
 	}
 
 	void criateCogMap() {
-		for (Role canCo : sr.roleSizeMap.keySet()) {
-			cogMap.put(canCo, new Cog(this,canCo));
+		for (Role canCo : sr.getRoleSizeMap().keySet()) {
+			cogMap.put(canCo, new Cog(this, canCo));
 		}
 	}
 
@@ -102,7 +121,7 @@ public class SessionBoard {
 		return playerList;
 	}
 
-	public Map<Role,Cog> getCogMap() {
+	public Map<Role, Cog> getCogMap() {
 		return cogMap;
 	}
 

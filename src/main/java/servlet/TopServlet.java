@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import model.Fase;
-import model.SessionBoard;
+import model.FaseBoard;
 import model.SessionRegulation;
 
 /**
@@ -47,7 +47,7 @@ public class TopServlet extends HttpServlet {
 		// TODO Auto-generated method stub		
 		SessionRegulation sr = new SessionRegulation(request);
 		Fase fase = new Fase("d", 1);
-		SessionBoard d1 = new SessionBoard(fase);
+		FaseBoard d1 = new FaseBoard(fase);
 		
 		request.getSession().setAttribute("sr", sr);
 		request.getSession().setAttribute("d1", d1);
