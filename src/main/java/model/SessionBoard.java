@@ -28,7 +28,7 @@ public class SessionBoard {
 
 	public SessionBoard(Fase fase) {
 		this.fase = fase;
-		this.cp = new CalcPer(sr, this);
+		this.cp = new CalcPer(this);
 		criatePlayerList();
 		criateCogMap();
 		criateLatentPlayerList();

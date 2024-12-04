@@ -3,41 +3,20 @@ package model.logic;
 import model.Player;
 import model.SessionBoard;
 import model.SessionRegulation;
-import model.role.person.Role;
 
 public class CalcPer {
-	private SessionRegulation sr;
+	private static SessionRegulation sr;
 	private SessionBoard sb;
 	private float latentWWs;
 
-	public CalcPer(SessionRegulation sr,SessionBoard sb) {
-		this.sr = sr;
+	public CalcPer(SessionBoard sb) {
 		this.sb = sb;
 	}
 
 	public void updateVillsPer() {
 		latentWWs = sr.getWwsList().size();
-		updateCoTruePer();
 		updateLatentPlayerPer();
 		updateWwsPer();
-	}
-
-	public void updateCoTruePer() {
-		for (Role co : sb.getCogMap().keySet()) {
-			if(sb.getCogMap().get(co)==null) {
-				continue;
-			}
-			if (sb.getCogMap().get(co).size() >= sr.getRoleSizeMap().get(co)) {
-				latentWWs -= sb.getCogMap().get(co).size() - sr.getRoleSizeMap().get(co);
-
-				float truePer = sr.getRoleSizeMap().get(co) / sb.getCogMap().get(co).size();
-				for (Player coPlayer : sb.getCogMap().get(co).getList()) {
-					coPlayer.getTruePerMap().put(co, truePer);
-					coPlayer.getTruePerMap().replaceAll((key, value) -> key.equals(co) ? value : 0);
-					coPlayer.setVillsPer(truePer);
-				}
-			}
-		}
 	}
 
 	public void updateLatentPlayerPer() {
@@ -62,4 +41,8 @@ public class CalcPer {
 	public String perToJsp(float value) {
         return String.format("%.1f", value * 100);
     }
+	
+	public static void setSr(SessionRegulation SR) {
+		sr=SR;
+	}
 }

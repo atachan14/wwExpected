@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import model.logic.CalcPer;
 import model.role.person.Role;
 
 public class SessionRegulation {
@@ -27,6 +28,9 @@ public class SessionRegulation {
 
 	public SessionRegulation(HttpServletRequest request) {
 		SessionBoard.setSr(this);
+		CalcPer.setSr(this);
+		Cog.setSr(this);
+		
 		criateRoles(request);
 		criateCamps();
 	}
