@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import model.role.person.Role;
 
 public class SessionRegulation {
@@ -14,11 +13,13 @@ public class SessionRegulation {
 	List<Role> villsList = new ArrayList<>();
 	List<Role> wwsList = new ArrayList<>();
 	//(市民,市民,市民,狼,狼...)
-
+	List<Role> canCoList = new ArrayList<>();
+	
 	Map<Role, Integer> roleSizeMap = new LinkedHashMap<>();
 	Map<Role, Integer> villsRoleSizeMap = new LinkedHashMap<>();
 	Map<Role, Integer> wwsRoleSizeMap = new LinkedHashMap<>();
 	//(市民3,狼2...)
+	
 
 	String outRegulation = "";
 	String outVills = "";
@@ -43,6 +44,7 @@ public class SessionRegulation {
 			int size = Integer.parseInt(entry.getValue()[0]);
 
 			roleSizeMap.put(role, size);
+			canCoList.add(role);
 
 			for (int i = 0; i < size; i++) {
 				roleList.add(role);

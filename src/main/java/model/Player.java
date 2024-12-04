@@ -15,7 +15,7 @@ public class Player {
 	boolean alive = true;
 
 	float villsPer;
-	Map<Role, Float> rolePerMap = new LinkedHashMap<>();
+	Map<Role, Float> truePerMap = new LinkedHashMap<>();
 	float wwsPer;
 	float wPer;
 	float kPer;
@@ -27,7 +27,7 @@ public class Player {
 		num = i + 1;
 		co = new Latent();
 		for (Role canCo : roleMap.keySet()) {
-			rolePerMap.put(canCo, 0f);
+			truePerMap.put(canCo, 0f);
 		}
 	}
 
@@ -79,12 +79,12 @@ public class Player {
 		this.villsPer = villsPer;
 	}
 
-	public Map<Role, Float> getRolePerMap() {
-		return rolePerMap;
+	public Map<Role, Float> getTruePerMap() {
+		return truePerMap;
 	}
 
-	public void setRolePerMap(Map<Role, Float> rolePerMap) {
-		this.rolePerMap = rolePerMap;
+	public void setTruePerMap(Map<Role, Float> rolePerMap) {
+		this.truePerMap = rolePerMap;
 	}
 
 	public float getWwsPer() {

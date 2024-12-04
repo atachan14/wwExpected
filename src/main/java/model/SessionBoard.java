@@ -18,7 +18,8 @@ public class SessionBoard {
 	boolean wwsWin = false;
 
 	List<Player> playerList = new ArrayList<Player>();
-	Map<Role, List<Player>> coPlayerListMap = new LinkedHashMap<>();
+	
+	Map<Role,Cog> cogMap = new LinkedHashMap<>();
 	List<Player> latentPlayerList = new ArrayList<Player>();
 	List<Player> alivePlayerList;
 	int aliveWws;
@@ -27,20 +28,21 @@ public class SessionBoard {
 
 	public SessionBoard(Fase fase) {
 		this.fase = fase;
-		setup();
+		this.cp = new CalcPer(sr, this);
+		criatePlayerList();
+		criateCogMap();
+		criateLatentPlayerList();
 
 		cp.updateVillsPer();
-		countAliveWws();
-		checkEnd();
+//		checkEnd();
 
-		if (!villsWin && !wwsWin) {
-			criateNextSbList();
-		}
+//		if (!villsWin && !wwsWin) {
+//			criateNextSbList();
+//		}
 	}
 
 	public SessionBoard(Fase fase, Player exedPlayer, Fase beforFase) {
 		this.fase = fase;
-		setup();
 
 	}
 
@@ -54,15 +56,6 @@ public class SessionBoard {
 		}
 	}
 
-	void countAliveWws() {
-		float temp = alivePlayerList.stream()
-				.map(Player::getWwsPer)
-				.reduce(0.0f, (a, b) -> a + b);
-		aliveWws = Math.round(temp);
-
-		System.out.println(fase + " aliveWws:" + aliveWws);
-	}
-
 	void checkEnd() {
 		if (aliveWws == 0 && alivePlayerList.size() >= 1) {
 			villsWin = true;
@@ -74,10 +67,7 @@ public class SessionBoard {
 	}
 
 	void setup() {
-		this.cp = new CalcPer(sr, this);
-		criatePlayerList();
-		criateCoPlayerListMap();
-		criateLatentPlayerList();
+
 	}
 
 	void criatePlayerList() {
@@ -86,9 +76,9 @@ public class SessionBoard {
 		}
 	}
 
-	void criateCoPlayerListMap() {
+	void criateCogMap() {
 		for (Role canCo : sr.roleSizeMap.keySet()) {
-			coPlayerListMap.put(canCo, new ArrayList<>());
+			cogMap.put(canCo, new Cog(this,canCo));
 		}
 	}
 
@@ -104,10 +94,6 @@ public class SessionBoard {
 				.collect(Collectors.toList());
 	}
 
-	void updateCoPlayerMap() {
-		coPlayerListMap = playerList.stream().collect(Collectors.groupingBy(Player::getCo));
-	}
-
 	public CalcPer getCp() {
 		return cp;
 	}
@@ -116,11 +102,11 @@ public class SessionBoard {
 		return playerList;
 	}
 
-	public Map<Role, List<Player>> getCoPlayerMap() {
-		return coPlayerListMap;
+	public Map<Role,Cog> getCogMap() {
+		return cogMap;
 	}
 
-	public List<Player> getNotCoPlayerList() {
+	public List<Player> getLatentPlayerList() {
 		return latentPlayerList;
 	}
 
