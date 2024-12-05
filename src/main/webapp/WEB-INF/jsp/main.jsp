@@ -8,7 +8,8 @@
 <title>main</title>
 </head>
 <body>
-	${sr.outRegulation}
+	${sr.outRegulation}<br>
+	${d1.winner}      {d1.maxWinPer}
 	<form action="top" method="post">
 		<table>
 			<tr>

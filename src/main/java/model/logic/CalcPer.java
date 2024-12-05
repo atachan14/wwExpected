@@ -1,6 +1,7 @@
 package model.logic;
 
 import java.io.Serializable;
+import java.util.List;
 
 import model.FaseBoard;
 import model.Player;
@@ -39,7 +40,15 @@ public class CalcPer implements Serializable{
 		}
 	}
 	
-	
+	public int countConfDeadWws(List<Player> playerList) {
+		float temp = playerList.stream()
+				.filter(p -> !p.isAlive())
+				.map(p -> p.getWwsPer())
+				.reduce(0.0f, (a, b) -> a + b);
+
+		temp = (int) Math.floor(temp);
+		return (int) temp;
+	}
 	
 	
 	

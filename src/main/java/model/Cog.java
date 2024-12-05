@@ -15,15 +15,17 @@ public class Cog {
 	int trueSize;
 	int hasWws;
 
+	boolean isFull;
 	int confDeadWws;
 
 	public Cog(FaseBoard sb, Role role) {
 		this.sb = sb;
 		this.role = role;
 		criatePlayerList();
-		updateSizes();
+		countSizes();
+		checkIsFull();
 		updateTruePer();
-		updateAliveWws();
+		sb.getCp().countConfDeadWws(playerList);
 
 	}
 
@@ -33,43 +35,36 @@ public class Cog {
 				.collect(Collectors.toList());
 	}
 
-	void updateSizes() {
+	void countSizes() {
 		size = this.playerList.size();
 		trueSize = sr.getRoleSizeMap().get(this.role);
 
 		hasWws = size - trueSize;
 	}
 
-	void updateTruePer() {
-		if (playerList == null) {
-			return;
+	void checkIsFull() {
+		if (trueSize <= size) {
+			isFull=true;
+		}else {
+			isFull=false;
 		}
-
-		if (trueSize > size) {
+	}
+	
+	void updateTruePer() {
+		if (!isFull) {
 			return;
 			//あとで実装
 			//replaceAllで他を0にしてlatentListと一緒にVillsPerを算出してtruePerに入れる
 		}
 
 		float truePer = trueSize / size;
-		truePer = (float)Math.ceil( truePer * 1000) / 1000;
 
 		for (Player player : playerList) {
 			player.getTruePerMap().put(this.role, truePer);
 			player.getTruePerMap().replaceAll((key, value) -> key.equals(this.role) ? value : 0);
-			player.setVillsPer(truePer);
-			player.setWwsPer(truePer);
+			player.setVillsPer((float) Math.ceil(truePer * 10000) / 10000);
+			player.setWwsPer((float) Math.ceil((1 - truePer) * 10000) / 10000);
 		}
-	}
-
-	void updateAliveWws() {
-		float temp = playerList.stream()
-				.filter(p -> !p.isAlive())
-				.map(p -> 1 - p.getVillsPer())
-				.reduce(0.0f, (a, b) -> a + b);
-
-		temp = (int)Math.floor(temp);
-		confDeadWws = (int)temp;
 	}
 
 	public int size() {
@@ -80,7 +75,13 @@ public class Cog {
 		return playerList;
 	}
 	
+	public boolean getIsFull() {
+		return isFull;
+	}
 	
+	public int getTrueSize() {
+		return trueSize;
+	}
 
 	public int getConfDeadWws() {
 		return confDeadWws;

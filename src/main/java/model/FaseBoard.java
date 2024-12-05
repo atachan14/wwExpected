@@ -15,16 +15,21 @@ public class FaseBoard implements Serializable {
 	CalcPer cp;
 	Fase fase;
 
+	String winner = "----";
 	boolean villsWin = false;
 	boolean wwsWin = false;
 	int maxWws;
 
+	float boardPer;
+	float maxWinPer;
+
 	List<Player> playerList = new ArrayList<Player>();
 
 	Map<Role, Cog> cogMap = new LinkedHashMap<>();
+	List<Cog> cogList = new ArrayList<>();
 	List<Player> latentPlayerList = new ArrayList<Player>();
 	List<Player> alivePlayerList;
-	int aliveWws;
+	int confAliveWws;
 
 	List<FaseBoard> nextFbList;
 
@@ -35,29 +40,32 @@ public class FaseBoard implements Serializable {
 	public FaseBoard(Fase fase) {
 		this.fase = fase;
 		this.cp = new CalcPer(this);
-		
+
 		criatePlayerList();
 		criateCogMap();
 		countWws();
 		criateLatentPlayerList();
 
 		cp.updateVillsPer();
-		//		checkEnd();
+		checkEnd();
 
 		//		if (!villsWin && !wwsWin) {
 		//			criateNextSbList();
 		//		}
 	}
-	
-	
+
 	void countWws() {
 		maxWws = sr.getWwsList().size();
-		aliveWws = maxWws;
-		
-		for(Role role : cogMap.keySet()) {
-			aliveWws -= cogMap.get(role).getConfDeadWws();
+		confAliveWws = maxWws;
+
+		for (Role role : cogMap.keySet()) {
+			confAliveWws -= cogMap.get(role).getConfDeadWws();
 		}
 		
+		for(Player player : playerList) {
+			player
+		}
+
 	}
 
 	public FaseBoard(Fase fase, Player exedPlayer, Fase beforFase) {
@@ -76,12 +84,24 @@ public class FaseBoard implements Serializable {
 	}
 
 	void checkEnd() {
-		if (aliveWws == 0 && alivePlayerList.size() >= 1) {
+		if (confAliveWws == 0 && alivePlayerList.size() >= 1) {
 			villsWin = true;
 		}
 
-		if (alivePlayerList.size() - aliveWws <= aliveWws) {
+		if (alivePlayerList.size() - confAliveWws <= confAliveWws) {
 			wwsWin = true;
+		}
+
+		if (villsWin && !wwsWin) {
+			winner = "村の勝利";
+		}
+
+		if (!villsWin && wwsWin) {
+			winner = "人狼の勝利";
+		}
+
+		if (villsWin && wwsWin) {
+			winner = "ドロー";
 		}
 	}
 
@@ -97,7 +117,9 @@ public class FaseBoard implements Serializable {
 
 	void criateCogMap() {
 		for (Role canCo : sr.getRoleSizeMap().keySet()) {
-			cogMap.put(canCo, new Cog(this, canCo));
+			Cog cog = new Cog(this, canCo);
+			cogMap.put(canCo, cog);
+			cogList.add(cog);
 		}
 	}
 
@@ -123,6 +145,10 @@ public class FaseBoard implements Serializable {
 
 	public Map<Role, Cog> getCogMap() {
 		return cogMap;
+	}
+
+	public List<Cog> getCogList() {
+		return cogList;
 	}
 
 	public List<Player> getLatentPlayerList() {
