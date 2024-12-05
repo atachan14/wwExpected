@@ -19,6 +19,7 @@ public class Cog {
 	boolean isFull;
 	float vacantPer;
 	int confDeadWws;
+	int confAliveWws;
 
 	public Cog(FaseBoard sb, Role role) {
 		this.sb = sb;
@@ -27,7 +28,7 @@ public class Cog {
 		countSizes();
 		checkIsFull();
 		updateVillsPer();
-		sb.getCp().countConfDeadWws(playerList);
+		countConfDeadWws();
 
 	}
 
@@ -71,6 +72,20 @@ public class Cog {
 		}
 	}
 
+	public void countConfDeadWws() {
+		float temp = playerList.stream()
+				.filter(p -> !p.isAlive())
+				.map(p -> p.getWwsPer())
+				.reduce(0.0f, (a, b) -> a + b);
+		confDeadWws = (int) Math.floor(temp);
+		
+		temp = playerList.stream()
+				.filter(p -> p.isAlive())
+				.map(p -> p.getWwsPer())
+				.reduce(0.0f, (a, b) -> a + b);
+		confAliveWws = (int) Math.floor(temp);
+	}
+
 	public int size() {
 		return playerList.size();
 	}
@@ -91,6 +106,12 @@ public class Cog {
 		return confDeadWws;
 	}
 
+	public int getConfAliveWws() {
+		return confAliveWws;
+	}
+
+	
+	
 	public static void setSr(SessionRegulation SR) {
 		sr = SR;
 	}

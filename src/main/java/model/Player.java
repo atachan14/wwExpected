@@ -13,12 +13,16 @@ public class Player {
 	String name;
 	Role co;
 	boolean alive = true;
+	
+	Role tempRole;
 
 	float villsPer;
 	Map<Role, Float> truePerMap = new LinkedHashMap<>();
 	float wwsPer;
 	float wPer;
 	float kPer;
+	
+	Map<Role,Float> campPerMap =new LinkedHashMap<>();
 
 	float villsWinPer;
 	float wwsWinPer;
@@ -29,6 +33,13 @@ public class Player {
 		for (Role canCo : roleMap.keySet()) {
 			truePerMap.put(canCo, 0f);
 		}
+	}
+	
+	public Player(int num,String name,Role co,boolean alive) {
+		this.num = num;
+		this.name = name;
+		this.co = co;
+		this.alive = alive;
 	}
 
 	public String getMainDisplay() {
@@ -71,6 +82,17 @@ public class Player {
 		this.alive = alive;
 	}
 
+	public Role getTempRole() {
+		return tempRole;
+	}
+
+	public void setTempRole(Role tempRole) {
+		this.tempRole = tempRole;
+		this.truePerMap.put(tempRole,1.0f);
+		this.truePerMap.replaceAll((key, value) -> key.equals(tempRole) ? value : 0);
+		
+	}
+
 	public float getVillsPer() {
 		return villsPer;
 	}
@@ -83,8 +105,16 @@ public class Player {
 		return truePerMap;
 	}
 
-	public void setTruePerMap(Map<Role, Float> rolePerMap) {
-		this.truePerMap = rolePerMap;
+	public void setTruePerMap(Map<Role, Float> truePerMap) {
+		this.truePerMap = truePerMap;
+	}
+
+	public Map<Role, Float> getCampPerMap() {
+		return campPerMap;
+	}
+
+	public void setCampPerMap(Map<Role, Float> campPerMap) {
+		this.campPerMap = campPerMap;
 	}
 
 	public float getWwsPer() {

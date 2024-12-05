@@ -15,12 +15,14 @@ public class FaseBoard implements Serializable {
 	CalcPer cp;
 	Fase fase;
 
-	String winner = "----";
+	String winner = "--";
 	boolean villsWin = false;
 	boolean wwsWin = false;
+	float winPer;
 	int maxWws;
 
 	float boardPer;
+	float boardWinPer;
 	float maxWinPer;
 
 	List<Player> playerList = new ArrayList<Player>();
@@ -30,9 +32,12 @@ public class FaseBoard implements Serializable {
 	List<Player> latentPlayerList = new ArrayList<Player>();
 
 	List<Player> alivePlayerList;
-	int confAliveWwsSize;
+	int confDeadWwsSize = 0;
+	int confAliveWwsSize = 0;
 
+	Fase nextFase;
 	List<FaseBoard> nextFbList;
+	Player exedPlayer;
 
 	public FaseBoard() {
 
@@ -42,6 +47,7 @@ public class FaseBoard implements Serializable {
 		this.fase = fase;
 		this.cp = new CalcPer(this);
 
+		this.boardPer = 1.0f;
 		criatePlayerList();
 		criateCogMap();
 		countWws();
@@ -50,35 +56,71 @@ public class FaseBoard implements Serializable {
 		cp.updateVillsPer();
 		checkEnd();
 
-		//		if (!villsWin && !wwsWin) {
-		//			criateNextSbList();
-		//		}
+		if (winner == "--") {
+			criateNextFase();
+			criateNextSbList();
+		}
 	}
 
-	public FaseBoard(Fase fase, Player exedPlayer, Fase beforFase) {
+	//	nextFase, boardPer,p.getNum(),role, this
+	public FaseBoard(Fase fase, float boardPer, int num, Role role, FaseBoard beforBoard) {
 		this.fase = fase;
+		this.cp = new CalcPer(this);
 
+		this.boardPer = boardPer;
+		criateCopyedPlayerList(beforBoard);
+		exeExedPlayer(num, role);
+
+		criateCogMap();
+		countWws();
+		criateLatentPlayerList();
+
+		//		cp.updateVillsPer();
+		checkEnd();
+
+		if (winner == "--") {
+			criateNextFase();
+			criateNextSbList();
+			calcExeWinPer();
+		}
+	}
+
+	void calcExeWinPer() {
+
+	}
+
+	void criateCopyedPlayerList(FaseBoard beforBoard) {
+		playerList = beforBoard.getPlayerList().stream()
+				.map(p -> new Player(p.getNum(), p.getName(), p.getCo(), p.isAlive()))
+				.collect(Collectors.toList());
+	}
+
+	void exeExedPlayer(int num, Role role) {
+		this.exedPlayer = playerList.get(num - 1);
+		exedPlayer.setAlive(false);
+		exedPlayer.setTempRole(role);
 	}
 
 	void countWws() {
-		maxWws = sr.getWwsList().size();
-		confAliveWwsSize = maxWws;
+		for (Role role : cogMap.keySet()) {
+			confDeadWwsSize += cogMap.get(role).getConfDeadWws();
+		}
 
 		for (Role role : cogMap.keySet()) {
-			confAliveWwsSize -= cogMap.get(role).getConfDeadWws();
+			confAliveWwsSize += cogMap.get(role).getConfAliveWws();
 		}
 
 		alivePlayerList = playerList.stream()
 				.filter(a -> a.isAlive())
 				.collect(Collectors.toList());
 
-		System.out.println(confAliveWwsSize);
+		System.out.println(confDeadWwsSize);
 
 	}
 
 	void checkEnd() {
 
-		if (confAliveWwsSize == 0 && alivePlayerList.size() >= 1) {
+		if (confDeadWwsSize == sr.getWwsList().size() && alivePlayerList.size() >= 1) {
 			villsWin = true;
 		}
 
@@ -87,24 +129,37 @@ public class FaseBoard implements Serializable {
 		}
 
 		if (villsWin && !wwsWin) {
-			winner = "村の勝利";
+			winner = "村WIN";
 		}
 
 		if (!villsWin && wwsWin) {
-			winner = "人狼の勝利";
+			winner = "人狼WIN";
 		}
 
 		if (villsWin && wwsWin) {
-			winner = "ドロー";
+			winner = "DRAW";
+		}
+	}
+
+	void criateNextFase() {
+		switch (this.fase.getZone()) {
+		case "d":
+			nextFase = new Fase("n", fase.getDay());
+			break;
+
+		case "n":
+			nextFase = new Fase("d", fase.getDay() + 1);
+			break;
+		default:
+			nextFase = new Fase("?", 0);
 		}
 	}
 
 	void criateNextSbList() {
-		switch (this.fase.getZone()) {
-		case "d":
-			Fase nextFase = new Fase("n", fase.getDay());
-			for (Player p : alivePlayerList) {
-				nextFbList.add(new FaseBoard(nextFase, p, fase));
+		for (Player p : alivePlayerList) {
+			for (Role role : p.getCampPerMap().keySet()) {
+				float boardPer = p.getCampPerMap().get(role);
+				nextFbList.add(new FaseBoard(nextFase, boardPer, p.getNum(), role, this));
 			}
 		}
 	}
@@ -158,8 +213,6 @@ public class FaseBoard implements Serializable {
 	public List<Player> getLatentPlayerList() {
 		return latentPlayerList;
 	}
-	
-	
 
 	public String getWinner() {
 		return winner;
