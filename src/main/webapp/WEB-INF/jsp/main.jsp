@@ -36,7 +36,7 @@
 					</select></td>
 					<td>${d1.cp.perToJsp(d1.playerList.get(i).villsPer)}</td>
 					<td>${d1.cp.perToJsp(d1.playerList.get(i).wwsPer)}</td>
-					<td></td>
+					<td>${d1.cp.perToJsp(d1.playerList.get(i).exedWinPer)}</td>
 					<td></td>
 				</tr>
 			</c:forEach>

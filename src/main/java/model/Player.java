@@ -13,29 +13,28 @@ public class Player {
 	String name;
 	Role co;
 	boolean alive = true;
-	
-	Role tempRole;
 
-	float villsPer;
+	Role confRole;
+
 	Map<Role, Float> truePerMap = new LinkedHashMap<>();
+	Map<Role, FaseBoard> parallelFbMap = new LinkedHashMap<>();
+	float villsPer;
 	float wwsPer;
 	float wPer;
 	float kPer;
-	
-	Map<Role,Float> campPerMap =new LinkedHashMap<>();
 
-	float villsWinPer;
-	float wwsWinPer;
+	float exedWinPer;
 
 	public Player(int i, Map<Role, Integer> roleMap) {
 		num = i + 1;
+		this.name = "player" + this.num;
 		co = new Latent();
 		for (Role canCo : roleMap.keySet()) {
 			truePerMap.put(canCo, 0f);
 		}
 	}
-	
-	public Player(int num,String name,Role co,boolean alive) {
+
+	public Player(int num, String name, Role co, boolean alive) {
 		this.num = num;
 		this.name = name;
 		this.co = co;
@@ -82,15 +81,15 @@ public class Player {
 		this.alive = alive;
 	}
 
-	public Role getTempRole() {
-		return tempRole;
+	public Role getConfRole() {
+		return confRole;
 	}
 
-	public void setTempRole(Role tempRole) {
-		this.tempRole = tempRole;
-		this.truePerMap.put(tempRole,1.0f);
-		this.truePerMap.replaceAll((key, value) -> key.equals(tempRole) ? value : 0);
-		
+	public void setConfRole(Role confRole) {
+		this.confRole = confRole;
+		this.truePerMap.put(confRole, 1.0f);
+		this.truePerMap.replaceAll((key, value) -> key.equals(confRole) ? value : 0);
+
 	}
 
 	public float getVillsPer() {
@@ -109,12 +108,12 @@ public class Player {
 		this.truePerMap = truePerMap;
 	}
 
-	public Map<Role, Float> getCampPerMap() {
-		return campPerMap;
+	public Map<Role, FaseBoard> getParallelFbMap() {
+		return parallelFbMap;
 	}
 
-	public void setCampPerMap(Map<Role, Float> campPerMap) {
-		this.campPerMap = campPerMap;
+	public void setParallelFbMap(Map<Role, FaseBoard> parallelFbMap) {
+		this.parallelFbMap = parallelFbMap;
 	}
 
 	public float getWwsPer() {
@@ -141,20 +140,16 @@ public class Player {
 		this.kPer = kPer;
 	}
 
-	public float getVillsWinPer() {
-		return villsWinPer;
+	public float getExedWinPer() {
+		return exedWinPer;
 	}
 
-	public void setVillsWinPer(float villsWinPer) {
-		this.villsWinPer = villsWinPer;
+	public void setExedWinPer(float exedWinPer) {
+		this.exedWinPer = exedWinPer;
 	}
 
-	public float getWwsWinPer() {
-		return wwsWinPer;
-	}
-
-	public void setWwsWinPer(float wwsWinPer) {
-		this.wwsWinPer = wwsWinPer;
+	public void addExedWinPer(float exedWinPer) {
+		this.exedWinPer += exedWinPer;
 	}
 
 }

@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import model.logic.CalcPer;
+import model.role.child.Latent;
 import model.role.person.Role;
 
 public class SessionRegulation implements Serializable{
@@ -59,6 +61,7 @@ public class SessionRegulation implements Serializable{
 				roleList.add(role);
 			}
 		}
+		canCoList.add(new Latent());
 
 		// debug用
 		System.out.print("list:");
@@ -125,6 +128,10 @@ public class SessionRegulation implements Serializable{
 
 	public Map<Role, Integer> getWwsRoleSizeMap() {
 		return wwsRoleSizeMap;
+	}
+	
+	public List<Role> getCanCoList() {
+		return canCoList;
 	}
 
 	public String getOutRegulation() {

@@ -18,17 +18,16 @@ public class FaseBoard implements Serializable {
 	String winner = "--";
 	boolean villsWin = false;
 	boolean wwsWin = false;
-	float winPer;
-	int maxWws;
+	float villsWinPer;
+	float wwsWinPer;
 
 	float boardPer;
-	float boardWinPer;
-	float maxWinPer;
 
 	List<Player> playerList = new ArrayList<Player>();
 
 	Map<Role, Cog> cogMap = new LinkedHashMap<>();
 	List<Cog> cogList = new ArrayList<>();
+	Latentg latentg;
 	List<Player> latentPlayerList = new ArrayList<Player>();
 
 	List<Player> alivePlayerList;
@@ -36,7 +35,6 @@ public class FaseBoard implements Serializable {
 	int confAliveWwsSize = 0;
 
 	Fase nextFase;
-	List<FaseBoard> nextFbList;
 	Player exedPlayer;
 
 	public FaseBoard() {
@@ -49,17 +47,9 @@ public class FaseBoard implements Serializable {
 
 		this.boardPer = 1.0f;
 		criatePlayerList();
-		criateCogMap();
-		countWws();
-		criateLatentPlayerList();
 
-		cp.updateVillsPer();
-		checkEnd();
+		setup();
 
-		if (winner == "--") {
-			criateNextFase();
-			criateNextSbList();
-		}
 	}
 
 	//	nextFase, boardPer,p.getNum(),role, this
@@ -71,22 +61,37 @@ public class FaseBoard implements Serializable {
 		criateCopyedPlayerList(beforBoard);
 		exeExedPlayer(num, role);
 
-		criateCogMap();
-		countWws();
-		criateLatentPlayerList();
+		setup();
+	}
 
-		//		cp.updateVillsPer();
+	void setup() {
+		criateAlivePlayerList();
+		List<String> a = playerList.stream()
+				.map(b -> b.getCo().getName())
+				.collect(Collectors.toList());
+		System.out.println(a);
+
+		criateCogMap();
+
+		countWws();
 		checkEnd();
 
 		if (winner == "--") {
 			criateNextFase();
-			criateNextSbList();
-			calcExeWinPer();
+			criateParallelFbMap();
+			calcExedWinPer();
 		}
 	}
 
-	void calcExeWinPer() {
-
+	void calcExedWinPer() {
+		for (Player player : playerList) {
+			float winPer = 0;
+			for (Role role : player.getParallelFbMap().keySet()) {
+				winPer += player.getParallelFbMap().get(role).getVillsWinPer()
+						* player.getParallelFbMap().get(role).getBoardPer();
+			}
+			player.setExedWinPer(winPer);
+		}
 	}
 
 	void criateCopyedPlayerList(FaseBoard beforBoard) {
@@ -98,7 +103,7 @@ public class FaseBoard implements Serializable {
 	void exeExedPlayer(int num, Role role) {
 		this.exedPlayer = playerList.get(num - 1);
 		exedPlayer.setAlive(false);
-		exedPlayer.setTempRole(role);
+		exedPlayer.setConfRole(role);
 	}
 
 	void countWws() {
@@ -109,23 +114,20 @@ public class FaseBoard implements Serializable {
 		for (Role role : cogMap.keySet()) {
 			confAliveWwsSize += cogMap.get(role).getConfAliveWws();
 		}
-
-		alivePlayerList = playerList.stream()
-				.filter(a -> a.isAlive())
-				.collect(Collectors.toList());
-
-		System.out.println(confDeadWwsSize);
-
 	}
 
 	void checkEnd() {
 
 		if (confDeadWwsSize == sr.getWwsList().size() && alivePlayerList.size() >= 1) {
 			villsWin = true;
+			villsWinPer = 1.0f;
+			wwsWinPer = 0f;
 		}
 
 		if (alivePlayerList.size() - confAliveWwsSize <= confAliveWwsSize) {
 			wwsWin = true;
+			villsWinPer = 0f;
+			wwsWinPer = 1.0f;
 		}
 
 		if (villsWin && !wwsWin) {
@@ -155,17 +157,13 @@ public class FaseBoard implements Serializable {
 		}
 	}
 
-	void criateNextSbList() {
+	void criateParallelFbMap() {
 		for (Player p : alivePlayerList) {
-			for (Role role : p.getCampPerMap().keySet()) {
-				float boardPer = p.getCampPerMap().get(role);
-				nextFbList.add(new FaseBoard(nextFase, boardPer, p.getNum(), role, this));
+			for (Role role : p.getTruePerMap().keySet()) {
+				float nextBoardPer = p.getTruePerMap().get(role);
+				p.getParallelFbMap().put(role, new FaseBoard(nextFase, nextBoardPer, p.getNum(), role, this));
 			}
 		}
-	}
-
-	void setup() {
-
 	}
 
 	void criatePlayerList() {
@@ -175,17 +173,17 @@ public class FaseBoard implements Serializable {
 	}
 
 	void criateCogMap() {
-		for (Role canCo : sr.getRoleSizeMap().keySet()) {
+
+		for (Role canCo : sr.getCanCoList()) {
+			if (canCo.getName() == "？") {
+				latentg = new Latentg(this, canCo);
+				continue;
+			}
 			Cog cog = new Cog(this, canCo);
 			cogMap.put(canCo, cog);
 			cogList.add(cog);
 		}
-	}
 
-	void criateLatentPlayerList() {
-		for (Player player : playerList) {
-			latentPlayerList.add(player);
-		}
 	}
 
 	void criateAlivePlayerList() {
@@ -216,6 +214,38 @@ public class FaseBoard implements Serializable {
 
 	public String getWinner() {
 		return winner;
+	}
+
+	public Fase getFase() {
+		return fase;
+	}
+
+	public float getBoardPer() {
+		return boardPer;
+	}
+
+	public List<Player> getAlivePlayerList() {
+		return alivePlayerList;
+	}
+
+	public int getConfDeadWwsSize() {
+		return confDeadWwsSize;
+	}
+
+	public int getConfAliveWwsSize() {
+		return confAliveWwsSize;
+	}
+
+	public Player getExedPlayer() {
+		return exedPlayer;
+	}
+
+	public float getVillsWinPer() {
+		return villsWinPer;
+	}
+
+	public float getWwsWinPer() {
+		return wwsWinPer;
 	}
 
 	public static void setSr(SessionRegulation SR) {

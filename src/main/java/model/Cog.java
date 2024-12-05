@@ -25,16 +25,17 @@ public class Cog {
 		this.sb = sb;
 		this.role = role;
 		criatePlayerList();
+		System.out.println(role.getName() + "groupのプレイヤーサイズ:" + playerList.size());
 		countSizes();
 		checkIsFull();
-		updateVillsPer();
-		countConfDeadWws();
+		updateTruePer();
+		countConfWws();
 
 	}
 
 	void criatePlayerList() {
 		playerList = sb.getPlayerList().stream()
-				.filter(a -> a.getCo() == this.role)
+				.filter(a -> a.getCo() == role)
 				.collect(Collectors.toList());
 	}
 
@@ -56,11 +57,11 @@ public class Cog {
 		}
 	}
 
-	void updateVillsPer() {
+	void updateTruePer() {
 		if (!isFull) {
 			return;
 			//あとで実装
-			//replaceAllで他を0にしてlatentListと一緒にVillsPerを算出してtruePerに入れる
+			//replaceAllで他を0にしてlatentListと一緒にVillsPerを算出してtruePerに入れる？
 		}
 
 		for (Player player : playerList) {
@@ -72,13 +73,13 @@ public class Cog {
 		}
 	}
 
-	public void countConfDeadWws() {
+	public void countConfWws() {
 		float temp = playerList.stream()
 				.filter(p -> !p.isAlive())
 				.map(p -> p.getWwsPer())
 				.reduce(0.0f, (a, b) -> a + b);
 		confDeadWws = (int) Math.floor(temp);
-		
+
 		temp = playerList.stream()
 				.filter(p -> p.isAlive())
 				.map(p -> p.getWwsPer())
@@ -110,8 +111,6 @@ public class Cog {
 		return confAliveWws;
 	}
 
-	
-	
 	public static void setSr(SessionRegulation SR) {
 		sr = SR;
 	}
