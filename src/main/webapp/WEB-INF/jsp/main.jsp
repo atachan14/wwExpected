@@ -9,7 +9,7 @@
 </head>
 <body>
 	${sr.outRegulation}<br>
-	${d1.winner}      {d1.maxWinPer}
+	${d1.winner}   
 	<form action="top" method="post">
 		<table>
 			<tr>

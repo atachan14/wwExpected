@@ -28,8 +28,9 @@ public class FaseBoard implements Serializable {
 	Map<Role, Cog> cogMap = new LinkedHashMap<>();
 	List<Cog> cogList = new ArrayList<>();
 	List<Player> latentPlayerList = new ArrayList<Player>();
+
 	List<Player> alivePlayerList;
-	int confAliveWws;
+	int confAliveWwsSize;
 
 	List<FaseBoard> nextFbList;
 
@@ -54,41 +55,34 @@ public class FaseBoard implements Serializable {
 		//		}
 	}
 
-	void countWws() {
-		maxWws = sr.getWwsList().size();
-		confAliveWws = maxWws;
-
-		for (Role role : cogMap.keySet()) {
-			confAliveWws -= cogMap.get(role).getConfDeadWws();
-		}
-		
-		for(Player player : playerList) {
-			player
-		}
-
-	}
-
 	public FaseBoard(Fase fase, Player exedPlayer, Fase beforFase) {
 		this.fase = fase;
 
 	}
 
-	void criateNextSbList() {
-		switch (this.fase.getZone()) {
-		case "d":
-			Fase nextFase = new Fase("n", fase.getDay());
-			for (Player p : alivePlayerList) {
-				nextFbList.add(new FaseBoard(nextFase, p, fase));
-			}
+	void countWws() {
+		maxWws = sr.getWwsList().size();
+		confAliveWwsSize = maxWws;
+
+		for (Role role : cogMap.keySet()) {
+			confAliveWwsSize -= cogMap.get(role).getConfDeadWws();
 		}
+
+		alivePlayerList = playerList.stream()
+				.filter(a -> a.isAlive())
+				.collect(Collectors.toList());
+
+		System.out.println(confAliveWwsSize);
+
 	}
 
 	void checkEnd() {
-		if (confAliveWws == 0 && alivePlayerList.size() >= 1) {
+
+		if (confAliveWwsSize == 0 && alivePlayerList.size() >= 1) {
 			villsWin = true;
 		}
 
-		if (alivePlayerList.size() - confAliveWws <= confAliveWws) {
+		if (alivePlayerList.size() - confAliveWwsSize <= confAliveWwsSize) {
 			wwsWin = true;
 		}
 
@@ -102,6 +96,16 @@ public class FaseBoard implements Serializable {
 
 		if (villsWin && wwsWin) {
 			winner = "ドロー";
+		}
+	}
+
+	void criateNextSbList() {
+		switch (this.fase.getZone()) {
+		case "d":
+			Fase nextFase = new Fase("n", fase.getDay());
+			for (Player p : alivePlayerList) {
+				nextFbList.add(new FaseBoard(nextFase, p, fase));
+			}
 		}
 	}
 
@@ -153,6 +157,12 @@ public class FaseBoard implements Serializable {
 
 	public List<Player> getLatentPlayerList() {
 		return latentPlayerList;
+	}
+	
+	
+
+	public String getWinner() {
+		return winner;
 	}
 
 	public static void setSr(SessionRegulation SR) {
