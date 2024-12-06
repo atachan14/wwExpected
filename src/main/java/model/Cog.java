@@ -24,7 +24,7 @@ public class Cog {
 		this.sb = sb;
 		this.role = role;
 		this.playerList = playerList;
-		System.out.println(role.getName() + "groupのプレイヤーサイズ:" + playerList.size());
+		//		System.out.println(role.getName() + "groupのプレイヤーサイズ:" + playerList.size());
 		countSizes();
 		checkIsFull();
 		updateTruePer();
@@ -44,7 +44,7 @@ public class Cog {
 		if (size == 0)
 			return;
 
-		truePer = (float)trueSize / size;
+		truePer = (float) trueSize / size;
 		hasWws = size - trueSize;
 	}
 
@@ -66,9 +66,14 @@ public class Cog {
 		for (Player player : playerList) {
 			player.setVillsPer((float) Math.ceil(truePer * 10000) / 10000);
 			player.setWwsPer((float) Math.ceil((1 - truePer) * 10000) / 10000);
-			player.getTruePerMap().put(this.role, truePer);
-			player.getTruePerMap().replaceAll((key, value) -> key.equals(this.role) ? value : 0);
-
+			switch (this.role.getCamp()) {
+			case "vills":
+				player.getVillsTruePerMap().put(this.role, truePer);
+				player.getVillsTruePerMap().replaceAll((key, value) -> key.equals(this.role) ? value : 0);
+				break;
+			case "wws":
+				break;
+			}
 		}
 	}
 

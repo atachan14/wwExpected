@@ -9,6 +9,7 @@ public class Latentg extends Cog {
 		super(sb, latent, playerList);
 	}
 
+	@Override
 	void countSizes() {
 		size = this.playerList.size();
 		trueSize = sb.getCogList().stream()
@@ -18,12 +19,13 @@ public class Latentg extends Cog {
 		if (size == 0)
 			return;
 
-		truePer = (float)trueSize / size;
+		truePer = (float) trueSize / size;
 		hasWws = size - trueSize;
 		System.out
 				.println("latentg,truePer:" + truePer + ",trueSize:" + trueSize + ",size:" + size + ",hasWws" + hasWws);
 	}
 
+	@Override
 	void updateTruePer() {
 		if (!isFull) {
 			return;

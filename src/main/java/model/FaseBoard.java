@@ -92,7 +92,7 @@ public class FaseBoard implements Serializable {
 
 	void criateCopyedPlayerList(FaseBoard beforBoard) {
 		playerList = beforBoard.getPlayerList().stream()
-				.map(p -> new Player(p.getNum(), p.getName(), p.getCo(), p.isAlive()))
+				.map(p -> new Player(p.getId(), p.getName(), p.getCo(), p.isAlive()))
 				.collect(Collectors.toList());
 	}
 
@@ -157,7 +157,7 @@ public class FaseBoard implements Serializable {
 		for (Player p : alivePlayerList) {
 			for (Role role : p.getTruePerMap().keySet()) {
 				float nextBoardPer = p.getTruePerMap().get(role);
-				p.getParallelFbMap().put(role, new FaseBoard(nextFase, nextBoardPer, p.getNum(), role, this));
+				p.getParallelFbMap().put(role, new FaseBoard(nextFase, nextBoardPer, p.getId(), role, this));
 			}
 		}
 	}
@@ -175,8 +175,6 @@ public class FaseBoard implements Serializable {
 	void criateCogMap() {
 		Map<Role, List<Player>> coPlayerListMap = playerList.stream()
 				.collect(Collectors.groupingBy(Player::getCo));
-		
-		
 
 		for (Role co : coPlayerListMap.keySet()) {
 			if (co.getName() == "？") {

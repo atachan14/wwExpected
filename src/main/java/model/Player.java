@@ -17,6 +17,9 @@ public class Player {
 	Role confRole;
 
 	Map<Role, Float> truePerMap = new LinkedHashMap<>();
+	Map<Role, Float> villsTruePerMap = new LinkedHashMap<>();
+	Map<Role, Float> wwsTruePerMap = new LinkedHashMap<>();
+
 	Map<Role, FaseBoard> parallelFbMap = new LinkedHashMap<>();
 	float villsPer;
 	float wwsPer;
@@ -25,12 +28,19 @@ public class Player {
 
 	float exedWinPer;
 
-	public Player(int i, Latent latent ,Map<Role, Integer> roleMap) {
+	public Player(int i, Latent latent, Map<Role, Integer> roleSizeMap) {
 		id = i + 1;
 		this.name = "player" + this.id;
 		co = latent;
-		for (Role canCo : roleMap.keySet()) {
-			truePerMap.put(canCo, 0f);
+		for (Role role : roleSizeMap.keySet()) {
+			switch (role.getCamp()) {
+			case "vills":
+				villsTruePerMap.put(role, 0f);
+				break;
+			case "wws":
+				wwsTruePerMap.put(role, 0f);
+				break;
+			}
 		}
 	}
 
@@ -49,11 +59,11 @@ public class Player {
 		this.mainDisplay = mainDisplay;
 	}
 
-	public int getNum() {
+	public int getId() {
 		return id;
 	}
 
-	public void setNum(int num) {
+	public void setId(int num) {
 		this.id = num;
 	}
 
@@ -106,6 +116,22 @@ public class Player {
 
 	public void setTruePerMap(Map<Role, Float> truePerMap) {
 		this.truePerMap = truePerMap;
+	}
+
+	public Map<Role, Float> getVillsTruePerMap() {
+		return villsTruePerMap;
+	}
+
+	public void setVillsTruePerMap(Map<Role, Float> villsTruePerMap) {
+		this.villsTruePerMap = villsTruePerMap;
+	}
+
+	public Map<Role, Float> getWwsTruePerMap() {
+		return wwsTruePerMap;
+	}
+
+	public void setWwsTruePerMap(Map<Role, Float> wwsTruePerMap) {
+		this.wwsTruePerMap = wwsTruePerMap;
 	}
 
 	public Map<Role, FaseBoard> getParallelFbMap() {

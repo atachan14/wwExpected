@@ -5,7 +5,7 @@ import model.role.person.Vills;
 public class Prophet extends Vills {
 	public Prophet() {
 		super();
-		this.setName("占い師");
+		this.setName("占師");
 	}
 
 }
