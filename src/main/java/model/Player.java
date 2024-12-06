@@ -26,7 +26,9 @@ public class Player {
 	float wPer;
 	float kPer;
 
-	float exedWinPer;
+	float exedVillsWinPer;
+	float exedWwsPer;
+	String outExedPer;
 
 	public Player(int i, Latent latent, Map<Role, Integer> roleSizeMap) {
 		id = i + 1;
@@ -166,16 +168,30 @@ public class Player {
 		this.kPer = kPer;
 	}
 
-	public float getExedWinPer() {
-		return exedWinPer;
+	public float getExedVillsWinPer() {
+		return exedVillsWinPer;
 	}
 
-	public void setExedWinPer(float exedWinPer) {
-		this.exedWinPer = exedWinPer;
+	public void setExedVillsWinPer(float exedVillsWinPer) {
+		this.exedVillsWinPer = exedVillsWinPer;
 	}
 
-	public void addExedWinPer(float exedWinPer) {
-		this.exedWinPer += exedWinPer;
+	public float getExedWwsPer() {
+		return exedWwsPer;
 	}
+
+	public void setExedWwsPer(float exedWwsPer) {
+		this.exedWwsPer = exedWwsPer;
+	}
+
+	public String getOutExedPer() {
+		return outExedPer;
+	}
+
+	public void setOutExedPer(String outExedPer) {
+		this.outExedPer = outExedPer;
+	}
+	
+	
 
 }

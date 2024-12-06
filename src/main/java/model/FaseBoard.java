@@ -78,42 +78,8 @@ public class FaseBoard implements Serializable {
 			calcExedWinPer();
 		}
 	}
-
-	void calcExedWinPer() {
-		for (Player player : playerList) {
-			float winPer = 0;
-			for (Role role : player.getParallelFbMap().keySet()) {
-				winPer += player.getParallelFbMap().get(role).getVillsWinPer()
-						* player.getParallelFbMap().get(role).getBoardPer();
-			}
-			player.setExedWinPer(winPer);
-		}
-	}
-
-	void criateCopyedPlayerList(FaseBoard beforBoard) {
-		playerList = beforBoard.getPlayerList().stream()
-				.map(p -> new Player(p.getId(), p.getName(), p.getCo(), p.isAlive()))
-				.collect(Collectors.toList());
-	}
-
-	void exeExedPlayer(int num, Role role) {
-		this.exedPlayer = playerList.get(num - 1);
-		exedPlayer.setAlive(false);
-		exedPlayer.setConfRole(role);
-	}
-
-	void countWws() {
-		for (Role role : cogMap.keySet()) {
-			confDeadWwsSize += cogMap.get(role).getConfDeadWws();
-		}
-
-		for (Role role : cogMap.keySet()) {
-			confAliveWwsSize += cogMap.get(role).getConfAliveWws();
-		}
-	}
-
+	
 	void checkEnd() {
-
 		if (confDeadWwsSize == sr.getWwsList().size() && alivePlayerList.size() >= 1) {
 			villsWin = true;
 			villsWinPer = 1.0f;
@@ -150,6 +116,8 @@ public class FaseBoard implements Serializable {
 			break;
 		default:
 			nextFase = new Fase("?", 0);
+			System.out.println("nextFase error→" + this.fase);
+			break;
 		}
 	}
 
@@ -157,18 +125,54 @@ public class FaseBoard implements Serializable {
 		for (Player p : alivePlayerList) {
 			for (Role role : p.getTruePerMap().keySet()) {
 				float nextBoardPer = p.getTruePerMap().get(role);
-				p.getParallelFbMap().put(role, new FaseBoard(nextFase, nextBoardPer, p.getId(), role, this));
+				FaseBoard nextFb = new FaseBoard(nextFase, nextBoardPer, p.getId(), role, this);
+				p.getParallelFbMap().put(role, nextFb);
 			}
 		}
 	}
 
+	void calcExedWinPer() {
+		for (Player player : playerList) {
+			float winPer = 0;
+			for (Role role : player.getParallelFbMap().keySet()) {
+				winPer += player.getParallelFbMap().get(role).getVillsWinPer()
+						* player.getParallelFbMap().get(role).getBoardPer();
+			}
+			player.setExedVillsWinPer(winPer);
+		}
+	}
+
+	void criateCopyedPlayerList(FaseBoard beforBoard) {
+		playerList = beforBoard.getPlayerList().stream()
+				.map(p -> new Player(p.getId(), p.getName(), p.getCo(), p.isAlive()))
+				.collect(Collectors.toList());
+	}
+
+	void exeExedPlayer(int num, Role role) {
+		this.exedPlayer = playerList.get(num - 1);
+		exedPlayer.setAlive(false);
+		exedPlayer.setConfRole(role);
+	}
+
+	void countWws() {
+		for (Role role : cogMap.keySet()) {
+			confDeadWwsSize += cogMap.get(role).getConfDeadWws();
+		}
+
+		for (Role role : cogMap.keySet()) {
+			confAliveWwsSize += cogMap.get(role).getConfAliveWws();
+		}
+	}
+
+
+
 	void criatePlayerList() {
 		Latent latent = (Latent) sr.getCanCoList().stream()
-				.filter(a->a.getName() == "？")
+				.filter(a -> a.getName() == "？")
 				.findAny()
 				.get();
 		for (int i = 0; i < sr.getRoleList().size(); i++) {
-			playerList.add(new Player(i, latent,sr.getRoleSizeMap()));
+			playerList.add(new Player(i, latent, sr.getRoleSizeMap()));
 		}
 	}
 

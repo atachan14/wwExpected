@@ -39,7 +39,7 @@ th, td {
 				<c:forEach var="role" items="${sr.wwsRoleSizeMap.keySet()}">
 					<th>${role}%</th>
 					</c:forEach>
-				<th>村win%</th>
+				<th>win%</th>
 			</tr>
 
 			<c:forEach var="i" begin="0" end="${sr.roleList.size()-1}" step="1">
@@ -65,7 +65,7 @@ th, td {
 						<td>
 							${d1.cp.perToJsp(d1.playerList.get(i).wwsTruePerMap.get(role))}</td>
 					</c:forEach>
-					<td>${d1.cp.perToJsp(d1.playerList.get(i).exedWinPer)}</td>
+					<td>${d1.cp.perToJsp(d1.playerList.get(i).outExedPer)}</td>
 				</tr>
 			</c:forEach>
 		</table>

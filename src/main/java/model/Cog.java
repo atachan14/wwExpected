@@ -8,7 +8,7 @@ import model.role.person.Role;
 public class Cog {
 	static SessionRegulation sr;
 	FaseBoard sb;
-	Role role;
+	Role co;
 	List<Player> playerList;
 
 	int size;
@@ -22,7 +22,7 @@ public class Cog {
 
 	public Cog(FaseBoard sb, Role role, List<Player> playerList) {
 		this.sb = sb;
-		this.role = role;
+		this.co = role;
 		this.playerList = playerList;
 		//		System.out.println(role.getName() + "groupのプレイヤーサイズ:" + playerList.size());
 		countSizes();
@@ -34,13 +34,14 @@ public class Cog {
 
 	void criatePlayerList() {
 		playerList = sb.getPlayerList().stream()
-				.filter(a -> a.getCo() == role)
+				.filter(a -> a.getCo() == co)
 				.collect(Collectors.toList());
 	}
 
 	void countSizes() {
 		size = this.playerList.size();
-		trueSize = sr.getRoleSizeMap().get(this.role);
+		trueSize = sr.getRoleSizeMap().get(this.co);
+
 		if (size == 0)
 			return;
 
@@ -51,9 +52,9 @@ public class Cog {
 	void checkIsFull() {
 		if (trueSize <= size) {
 			isFull = true;
-		} else {
-			isFull = false;
+			return;
 		}
+		isFull = false;
 	}
 
 	void updateTruePer() {
@@ -66,10 +67,10 @@ public class Cog {
 		for (Player player : playerList) {
 			player.setVillsPer((float) Math.ceil(truePer * 10000) / 10000);
 			player.setWwsPer((float) Math.ceil((1 - truePer) * 10000) / 10000);
-			switch (this.role.getCamp()) {
+			switch (this.co.getCamp()) {
 			case "vills":
-				player.getVillsTruePerMap().put(this.role, truePer);
-				player.getVillsTruePerMap().replaceAll((key, value) -> key.equals(this.role) ? value : 0);
+				player.getVillsTruePerMap().put(this.co, truePer);
+				player.getVillsTruePerMap().replaceAll((key, value) -> key.equals(this.co) ? value : 0);
 				break;
 			case "wws":
 				break;
@@ -89,6 +90,10 @@ public class Cog {
 				.map(p -> p.getWwsPer())
 				.reduce(0.0f, (a, b) -> a + b);
 		confAliveWws = (int) Math.floor(temp);
+
+		//		↓ok!
+		//		System.out.println(co+"g.confDeadWws:"+confDeadWws);
+		//		System.out.println(co+"g.confAliveWws:"+confAliveWws);
 	}
 
 	public int size() {
