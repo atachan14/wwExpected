@@ -33,11 +33,11 @@ th, td {
 				<th>co</th>
 				<th>村s%▶</th>
 				<c:forEach var="role" items="${sr.villsRoleSizeMap.keySet()}">
-					<th>${role}%</th>>
+					<th>${role}%</th>
 					</c:forEach>
 				<th>狼s%▶</th>
 				<c:forEach var="role" items="${sr.wwsRoleSizeMap.keySet()}">
-					<th>${role}%</th>>
+					<th>${role}%</th>
 					</c:forEach>
 				<th>村win%</th>
 			</tr>
