@@ -9,7 +9,7 @@ import model.role.person.Role;
 public class Player {
 	String mainDisplay = "";
 
-	int num;
+	int id;
 	String name;
 	Role co;
 	boolean alive = true;
@@ -25,17 +25,17 @@ public class Player {
 
 	float exedWinPer;
 
-	public Player(int i, Map<Role, Integer> roleMap) {
-		num = i + 1;
-		this.name = "player" + this.num;
-		co = new Latent();
+	public Player(int i, Latent latent ,Map<Role, Integer> roleMap) {
+		id = i + 1;
+		this.name = "player" + this.id;
+		co = latent;
 		for (Role canCo : roleMap.keySet()) {
 			truePerMap.put(canCo, 0f);
 		}
 	}
 
 	public Player(int num, String name, Role co, boolean alive) {
-		this.num = num;
+		this.id = num;
 		this.name = name;
 		this.co = co;
 		this.alive = alive;
@@ -50,11 +50,11 @@ public class Player {
 	}
 
 	public int getNum() {
-		return num;
+		return id;
 	}
 
 	public void setNum(int num) {
-		this.num = num;
+		this.id = num;
 	}
 
 	public String getName() {

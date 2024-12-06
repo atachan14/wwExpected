@@ -7,23 +7,21 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import model.logic.CalcPer;
 import model.role.child.Latent;
 import model.role.person.Role;
 
-public class SessionRegulation implements Serializable{
+public class SessionRegulation implements Serializable {
 	private List<Role> roleList = new ArrayList<>();
 	private List<Role> villsList = new ArrayList<>();
 	private List<Role> wwsList = new ArrayList<>();
 	//(市民,市民,市民,狼,狼...)
 	private List<Role> canCoList = new ArrayList<>();
-	
+
 	private Map<Role, Integer> roleSizeMap = new LinkedHashMap<>();
 	private Map<Role, Integer> villsRoleSizeMap = new LinkedHashMap<>();
 	private Map<Role, Integer> wwsRoleSizeMap = new LinkedHashMap<>();
 	//(市民3,狼2...)
-	
 
 	private String outRegulation = "";
 	private String outVills = "";
@@ -33,22 +31,22 @@ public class SessionRegulation implements Serializable{
 		FaseBoard.setSr(this);
 		CalcPer.setSr(this);
 		Cog.setSr(this);
-		
+
 		criateRoles(request);
 		criateCamps();
 	}
-	
+
 	public SessionRegulation() {
-		
+
 	}
 
 	void criateRoles(HttpServletRequest request) {
 		for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
 			String key = entry.getKey();
-			String value =entry.getValue()[0];
+			String value = entry.getValue()[0];
 			if (value == null || value.isEmpty() || value.equals("0")) {
-	            continue; // 空文字、null、または"0"をスキップ
-	        }
+				continue; // 空文字、null、または"0"をスキップ
+			}
 			System.out.println(entry.getKey() + ":" + value);
 
 			Role role = RoleFactory.createRole(key);
@@ -61,7 +59,8 @@ public class SessionRegulation implements Serializable{
 				roleList.add(role);
 			}
 		}
-		canCoList.add(new Latent());
+		Latent latent = new Latent();
+		canCoList.add(latent);
 
 		// debug用
 		System.out.print("list:");
@@ -129,7 +128,7 @@ public class SessionRegulation implements Serializable{
 	public Map<Role, Integer> getWwsRoleSizeMap() {
 		return wwsRoleSizeMap;
 	}
-	
+
 	public List<Role> getCanCoList() {
 		return canCoList;
 	}

@@ -5,6 +5,7 @@
  * 			→stream.filter(role)でplayerList生成
  * 			→roleのcog作って引数にplayerList入れる
  * 			
+ * ●player毎のlatentが違う　先にnewして同じのを入れる
  * 
  * 
  * 

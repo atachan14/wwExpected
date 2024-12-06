@@ -17,14 +17,13 @@ public class Cog {
 	float truePer;
 
 	boolean isFull;
-	float vacantPer;
 	int confDeadWws;
 	int confAliveWws;
 
-	public Cog(FaseBoard sb, Role role) {
+	public Cog(FaseBoard sb, Role role, List<Player> playerList) {
 		this.sb = sb;
 		this.role = role;
-		criatePlayerList();
+		this.playerList = playerList;
 		System.out.println(role.getName() + "groupのプレイヤーサイズ:" + playerList.size());
 		countSizes();
 		checkIsFull();
@@ -45,7 +44,7 @@ public class Cog {
 		if (size == 0)
 			return;
 
-		truePer = trueSize / size;
+		truePer = (float)trueSize / size;
 		hasWws = size - trueSize;
 	}
 

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import model.logic.CalcPer;
+import model.role.child.Latent;
 import model.role.person.Role;
 
 public class FaseBoard implements Serializable {
@@ -66,11 +67,6 @@ public class FaseBoard implements Serializable {
 
 	void setup() {
 		criateAlivePlayerList();
-		List<String> a = playerList.stream()
-				.map(b -> b.getCo().getName())
-				.collect(Collectors.toList());
-		System.out.println(a);
-
 		criateCogMap();
 
 		countWws();
@@ -167,23 +163,30 @@ public class FaseBoard implements Serializable {
 	}
 
 	void criatePlayerList() {
+		Latent latent = (Latent) sr.getCanCoList().stream()
+				.filter(a->a.getName() == "？")
+				.findAny()
+				.get();
 		for (int i = 0; i < sr.getRoleList().size(); i++) {
-			playerList.add(new Player(i, sr.getRoleSizeMap()));
+			playerList.add(new Player(i, latent,sr.getRoleSizeMap()));
 		}
 	}
 
 	void criateCogMap() {
+		Map<Role, List<Player>> coPlayerListMap = playerList.stream()
+				.collect(Collectors.groupingBy(Player::getCo));
+		
+		
 
-		for (Role canCo : sr.getCanCoList()) {
-			if (canCo.getName() == "？") {
-				latentg = new Latentg(this, canCo);
-				continue;
+		for (Role co : coPlayerListMap.keySet()) {
+			if (co.getName() == "？") {
+				latentg = new Latentg(this, co, coPlayerListMap.get(co));
+			} else {
+				Cog cog = new Cog(this, co, coPlayerListMap.get(co));
+				cogMap.put(co, cog);
+				cogList.add(cog);
 			}
-			Cog cog = new Cog(this, canCo);
-			cogMap.put(canCo, cog);
-			cogList.add(cog);
 		}
-
 	}
 
 	void criateAlivePlayerList() {

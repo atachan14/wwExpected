@@ -1,14 +1,12 @@
 package model;
 
-import java.util.stream.Collectors;
+import java.util.List;
 
 import model.role.person.Role;
 
 public class Latentg extends Cog {
-	public Latentg(FaseBoard sb, Role latent) {
-		super(sb, latent);
-		this.sb = sb;
-		this.role = latent;
+	public Latentg(FaseBoard sb, Role latent, List<Player> playerList) {
+		super(sb, latent, playerList);
 	}
 
 	void countSizes() {
@@ -16,19 +14,16 @@ public class Latentg extends Cog {
 		trueSize = sb.getCogList().stream()
 				.map(a -> a.size() - a.hasWws)
 				.reduce(sr.getVillsList().size(), (a, b) -> a - b);
-		
+
 		if (size == 0)
 			return;
 
-		truePer = trueSize / size;
+		truePer = (float)trueSize / size;
 		hasWws = size - trueSize;
+		System.out
+				.println("latentg,truePer:" + truePer + ",trueSize:" + trueSize + ",size:" + size + ",hasWws" + hasWws);
 	}
-	void criatePlayerList() {
-		playerList = sb.getPlayerList().stream()
-				.filter(a -> a.getCo() == role)
-				.collect(Collectors.toList());
-	}
-	
+
 	void updateTruePer() {
 		if (!isFull) {
 			return;
