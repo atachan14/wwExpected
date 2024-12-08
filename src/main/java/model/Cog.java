@@ -1,30 +1,41 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import model.role.person.Role;
 
 public class Cog {
 	static SessionRegulation sr;
-	FaseBoard sb;
+	FaseBoard fb;
 	Role co;
 	List<Player> playerList;
 
-	int size;
-	int trueSize;
-	int hasWws = 0;
+	int size = 0;
+	int trueSize = 0;
+
+	int falseSize = 0;
+	int confSize = 0;
+	int vacant = 0;
+
+	Map<Role, Integer> campVacantSizeMapIB;
+	boolean isFull = false;
+
 	float truePer;
+	float falsePer;
 
-	boolean isFull;
-	int confDeadWws;
-	int confAliveWws;
+	int confAliveVills;
+	int confAliveEvils;
+	int confDeadVills;
+	int confDeadEvils;
 
-	public Cog(FaseBoard sb, Role role, List<Player> playerList) {
-		this.sb = sb;
+	public Cog(FaseBoard sb, Role role) {
+		this.fb = sb;
 		this.co = role;
-		this.playerList = playerList;
 		//		System.out.println(role.getName() + "groupのプレイヤーサイズ:" + playerList.size());
+		criatePlayerList();
+		campSetup();
 		countSizes();
 		checkIsFull();
 		updateTruePer();
@@ -33,20 +44,49 @@ public class Cog {
 	}
 
 	void criatePlayerList() {
-		playerList = sb.getPlayerList().stream()
+		playerList = fb.getPlayerList().stream()
 				.filter(a -> a.getCo() == co)
 				.collect(Collectors.toList());
+	}
+
+	void campSetup() {
+		switch (this.co.getCamp()) {
+		case "村s":
+			campVacantSizeMapIB = fb.getVillsVacantSizeMap();
+			break;
+
+		case "狼s":
+			campVacantSizeMapIB = fb.getWwsVacantSizeMap();
+			break;
+
+		default:
+			System.out.println("Cog.selectMapAndListIB() this.co.getCamp():" + this.co.getCamp());
+			break;
+		}
 	}
 
 	void countSizes() {
 		size = this.playerList.size();
 		trueSize = sr.getRoleSizeMap().get(this.co);
+		falseSize = size - trueSize;
+
+		confSize = (int) this.playerList.stream()
+				.filter(a -> a.getConfRole() == this.co)
+				.count();
+		vacant = trueSize - size;
+		campVacantSizeMapIB.put(this.co, vacant);
 
 		if (size == 0)
 			return;
 
 		truePer = (float) trueSize / size;
-		hasWws = size - trueSize;
+		falsePer = (float) 1 - truePer;
+
+		if (vacant <= 0) {
+			isFull = true;
+		} else {
+			isFull = false;
+		}
 	}
 
 	void checkIsFull() {
@@ -66,30 +106,45 @@ public class Cog {
 
 		for (Player player : playerList) {
 			player.setVillsPer((float) Math.ceil(truePer * 10000) / 10000);
-			player.setWwsPer((float) Math.ceil((1 - truePer) * 10000) / 10000);
+			player.setWwsPer((float) Math.ceil(falsePer * 10000) / 10000);
+
 			switch (this.co.getCamp()) {
-			case "vills":
+			case "村s":
 				player.getVillsTruePerMap().put(this.co, truePer);
 				player.getVillsTruePerMap().replaceAll((key, value) -> key.equals(this.co) ? value : 0);
 				break;
-			case "wws":
+			case "狼s":
+				System.out.println("cog.updateTruePer switch:狼s");
 				break;
+
+			default:
+				System.out.println("cog.updateTruePer switch:default");
 			}
+			player.getTruePerMap().putAll(player.getVillsTruePerMap());
+			player.getTruePerMap().putAll(player.getWwsTruePerMap());
 		}
+
 	}
 
 	public void countConfWws() {
+
 		float temp = playerList.stream()
-				.filter(p -> !p.isAlive())
-				.map(p -> p.getWwsPer())
+				.filter(p -> p.isAlive())
+				.map(p -> p.getVillsPer())
 				.reduce(0.0f, (a, b) -> a + b);
-		confDeadWws = (int) Math.floor(temp);
+		confAliveVills = (int) Math.floor(temp);
 
 		temp = playerList.stream()
 				.filter(p -> p.isAlive())
 				.map(p -> p.getWwsPer())
 				.reduce(0.0f, (a, b) -> a + b);
-		confAliveWws = (int) Math.floor(temp);
+		confAliveEvils = (int) Math.floor(temp);
+
+		temp = playerList.stream()
+				.filter(p -> !p.isAlive())
+				.map(p -> p.getWwsPer())
+				.reduce(0.0f, (a, b) -> a + b);
+		confDeadEvils = (int) Math.floor(temp);
 
 		//		↓ok!
 		//		System.out.println(co+"g.confDeadWws:"+confDeadWws);
@@ -98,6 +153,10 @@ public class Cog {
 
 	public int size() {
 		return playerList.size();
+	}
+
+	public int getVacant() {
+		return vacant;
 	}
 
 	public List<Player> getList() {
@@ -112,12 +171,20 @@ public class Cog {
 		return trueSize;
 	}
 
-	public int getConfDeadWws() {
-		return confDeadWws;
+	public int getConfAliveVills() {
+		return confAliveVills;
 	}
 
-	public int getConfAliveWws() {
-		return confAliveWws;
+	public int getConfAliveEvils() {
+		return confAliveEvils;
+	}
+
+	public int getConfDeadVills() {
+		return confDeadVills;
+	}
+
+	public int getConfDeadEvils() {
+		return confDeadEvils;
 	}
 
 	public static void setSr(SessionRegulation SR) {

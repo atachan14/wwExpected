@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
-import model.logic.CalcPer;
+
 import model.role.child.Latent;
 import model.role.person.Role;
 
@@ -16,8 +16,8 @@ public class SessionRegulation implements Serializable {
 	private List<Role> villsList = new ArrayList<>();
 	private List<Role> wwsList = new ArrayList<>();
 	//(市民,市民,市民,狼,狼...)
-	private List<Role> canCoList = new ArrayList<>();
 
+	private List<Role> canCoList = new ArrayList<>();
 	private Map<Role, Integer> roleSizeMap = new LinkedHashMap<>();
 	private Map<Role, Integer> villsRoleSizeMap = new LinkedHashMap<>();
 	private Map<Role, Integer> wwsRoleSizeMap = new LinkedHashMap<>();
@@ -29,7 +29,6 @@ public class SessionRegulation implements Serializable {
 
 	public SessionRegulation(HttpServletRequest request) {
 		FaseBoard.setSr(this);
-		CalcPer.setSr(this);
 		Cog.setSr(this);
 
 		criateRoles(request);
@@ -67,22 +66,27 @@ public class SessionRegulation implements Serializable {
 		for (Role role : roleList) {
 			System.out.print("[" + role.getName() + "]");
 		}
-
 		System.out.println();
+
 		System.out.print("map:");
 		for (Map.Entry<Role, Integer> entry : roleSizeMap.entrySet()) {
 			System.out.print("[" + entry.getKey().getName() + "*" + entry.getValue() + "]");
 		}
+		System.out.println();
+		System.out.println();
 	}
 
 	void criateCamps() {
 		for (Role role : roleList) {
 			switch (role.getCamp()) {
-			case "vills":
+			case "村s":
 				villsList.add(role);
 				break;
-			case "wws":
+			case "狼s":
 				wwsList.add(role);
+				break;
+			default:
+				System.out.println("sr.criateCamps1");
 				break;
 			}
 		}
@@ -92,13 +96,16 @@ public class SessionRegulation implements Serializable {
 
 		for (Map.Entry<Role, Integer> entry : roleSizeMap.entrySet()) {
 			switch (entry.getKey().getCamp()) {
-			case "vills":
+			case "村s":
 				villsRoleSizeMap.put(entry.getKey(), entry.getValue());
 				outVills += "[" + entry.getKey().getName() + entry.getValue() + "]";
 				break;
-			case "wws":
+			case "狼s":
 				wwsRoleSizeMap.put(entry.getKey(), entry.getValue());
 				outWWs += "[" + entry.getKey().getName() + entry.getValue() + "]";
+				break;
+			default:
+				System.out.println("sr.criateCamps2");
 				break;
 			}
 		}

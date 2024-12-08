@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.Fase;
 import model.FaseBoard;
 import model.SessionRegulation;
+import model.logic.ToJSP;
 
 /**
  * Servlet implementation class Entrance
@@ -46,10 +47,13 @@ public class TopServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub		
 		SessionRegulation sr = new SessionRegulation(request);
+		ToJSP tj = new ToJSP();
+
 		Fase fase = new Fase("d", 1);
 		FaseBoard d1 = new FaseBoard(fase);
-		
+
 		request.getSession().setAttribute("sr", sr);
+		request.getSession().setAttribute("tj", tj);
 		request.getSession().setAttribute("d1", d1);
 		response.sendRedirect("main");
 

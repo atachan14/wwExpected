@@ -7,33 +7,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import model.logic.CalcPer;
 import model.role.child.Latent;
 import model.role.person.Role;
 
 public class FaseBoard implements Serializable {
 	static SessionRegulation sr;
-	CalcPer cp;
 	Fase fase;
 
 	String winner = "--";
-	boolean villsWin = false;
-	boolean wwsWin = false;
+	//	boolean villsWin = false;
+	//	boolean wwsWin = false;
+	//	boolean draw = false;
 	float villsWinPer;
-	float wwsWinPer;
+	float evilsWinPer;
 
 	float boardPer;
 
-	List<Player> playerList = new ArrayList<Player>();
+	List<Player> playerList = new ArrayList<>();
 
 	Map<Role, Cog> cogMap = new LinkedHashMap<>();
 	List<Cog> cogList = new ArrayList<>();
-	Latentg latentg;
-	List<Player> latentPlayerList = new ArrayList<Player>();
+
+	Map<Role, Integer> villsVacantSizeMap = new LinkedHashMap<>();
+	int latentEvilsSize = 0;
+	Map<Role, Integer> wwsVacantSizeMap = new LinkedHashMap<>();
 
 	List<Player> alivePlayerList;
-	int confDeadWwsSize = 0;
-	int confAliveWwsSize = 0;
+	int confAliveVillsIB = 0;
+	int confAliveEvilsIB = 0;
 
 	Fase nextFase;
 	Player exedPlayer;
@@ -44,21 +45,20 @@ public class FaseBoard implements Serializable {
 
 	public FaseBoard(Fase fase) {
 		this.fase = fase;
-		this.cp = new CalcPer(this);
-
 		this.boardPer = 1.0f;
 		criatePlayerList();
 
 		setup();
+		
+		toToJSP();
 
 	}
 
 	//	nextFase, boardPer,p.getNum(),role, this
 	public FaseBoard(Fase fase, float boardPer, int num, Role role, FaseBoard beforBoard) {
 		this.fase = fase;
-		this.cp = new CalcPer(this);
-
 		this.boardPer = boardPer;
+		System.out.println("boardPer:" + boardPer);
 		criateCopyedPlayerList(beforBoard);
 		exeExedPlayer(num, role);
 
@@ -67,42 +67,93 @@ public class FaseBoard implements Serializable {
 
 	void setup() {
 		criateAlivePlayerList();
+		System.out.println("alivePlayerList.size()" + alivePlayerList.size());
 		criateCogMap();
 
-		countWws();
+		countConfAlives();
 		checkEnd();
 
 		if (winner == "--") {
+			System.out.println("	if (winner == \"--\") {");
 			criateNextFase();
 			criateParallelFbMap();
 			calcExedWinPer();
+			System.out.println("	}");
 		}
 	}
-	
+
+	void criatePlayerList() {
+		Latent latent = (Latent) sr.getCanCoList().stream()
+				.filter(a -> a.getName() == "？")
+				.findAny()
+				.get();
+		for (int i = 0; i < sr.getRoleList().size(); i++) {
+			playerList.add(new Player(i, latent, sr.getRoleSizeMap()));
+		}
+
+		latentEvilsSize = sr.getWwsList().size();
+	}
+
+	void criateCopyedPlayerList(FaseBoard beforBoard) {
+		playerList = beforBoard.getPlayerList().stream()
+				.map(p -> new Player(p.getId(), p.getName(), p.getCo(), p.isAlive()))
+				.collect(Collectors.toList());
+	}
+
+	void exeExedPlayer(int num, Role role) {
+		this.exedPlayer = playerList.get(num - 1);
+		exedPlayer.setAlive(false);
+		exedPlayer.setConfRole(role);
+	}
+
+	void criateAlivePlayerList() {
+		alivePlayerList = playerList.stream()
+				.filter(p -> p.isAlive())
+				.collect(Collectors.toList());
+	}
+
+	void criateCogMap() {
+		for (Role co : sr.getCanCoList()) {
+			if (co.getName() == "？") {
+				Latentg latentg = new Latentg(this, co);
+				cogMap.put(co, latentg);
+			} else {
+				Cog cog = new Cog(this, co);
+				cogMap.put(co, cog);
+			}
+
+		}
+	}
+
+	void countConfAlives() {
+		confAliveVillsIB = cogMap.values().stream()
+				.mapToInt(Cog::getConfAliveVills)
+				.sum();
+
+		confAliveEvilsIB = cogMap.values().stream()
+				.mapToInt(Cog::getConfAliveEvils)
+				.sum();
+	}
+
 	void checkEnd() {
-		if (confDeadWwsSize == sr.getWwsList().size() && alivePlayerList.size() >= 1) {
-			villsWin = true;
+		System.out.println("confAliveVillsIB:" + confAliveVillsIB + " confAliveEvilsIB:" + confAliveEvilsIB);
+
+		if (confAliveVillsIB >= 1 && confAliveEvilsIB == 0) {
 			villsWinPer = 1.0f;
-			wwsWinPer = 0f;
-		}
-
-		if (alivePlayerList.size() - confAliveWwsSize <= confAliveWwsSize) {
-			wwsWin = true;
-			villsWinPer = 0f;
-			wwsWinPer = 1.0f;
-		}
-
-		if (villsWin && !wwsWin) {
+			evilsWinPer = 0f;
 			winner = "村WIN";
-		}
-
-		if (!villsWin && wwsWin) {
+		} else if (confAliveVillsIB == confAliveEvilsIB && confAliveEvilsIB > 0) {
+			villsWinPer = 0f;
+			evilsWinPer = 1.0f;
 			winner = "人狼WIN";
-		}
-
-		if (villsWin && wwsWin) {
+		} else if (confAliveVillsIB == confAliveEvilsIB && confAliveEvilsIB == 0) {
+			villsWinPer = 0.5f;
+			evilsWinPer = 0.5f;
 			winner = "DRAW";
+		} else {
+			System.out.println("checkEnd next");
 		}
+		System.out.println(winner);
 	}
 
 	void criateNextFase() {
@@ -127,7 +178,10 @@ public class FaseBoard implements Serializable {
 				float nextBoardPer = p.getTruePerMap().get(role);
 				FaseBoard nextFb = new FaseBoard(nextFase, nextBoardPer, p.getId(), role, this);
 				p.getParallelFbMap().put(role, nextFb);
+
 			}
+			System.out.println("criateParallelFbMap p.id:" + p.getId() + "+p.getTruePerMap().size:"
+					+ p.getTruePerMap().size() + " ,getParallelFbMap.size:" + p.getParallelFbMap().size());
 		}
 	}
 
@@ -139,66 +193,13 @@ public class FaseBoard implements Serializable {
 						* player.getParallelFbMap().get(role).getBoardPer();
 			}
 			player.setExedVillsWinPer(winPer);
+			player.setExedWwsWinPer(1 - winPer);
+			player.setOutExedPer(winPer + "/" + (1 - winPer));
 		}
 	}
-
-	void criateCopyedPlayerList(FaseBoard beforBoard) {
-		playerList = beforBoard.getPlayerList().stream()
-				.map(p -> new Player(p.getId(), p.getName(), p.getCo(), p.isAlive()))
-				.collect(Collectors.toList());
-	}
-
-	void exeExedPlayer(int num, Role role) {
-		this.exedPlayer = playerList.get(num - 1);
-		exedPlayer.setAlive(false);
-		exedPlayer.setConfRole(role);
-	}
-
-	void countWws() {
-		for (Role role : cogMap.keySet()) {
-			confDeadWwsSize += cogMap.get(role).getConfDeadWws();
-		}
-
-		for (Role role : cogMap.keySet()) {
-			confAliveWwsSize += cogMap.get(role).getConfAliveWws();
-		}
-	}
-
-
-
-	void criatePlayerList() {
-		Latent latent = (Latent) sr.getCanCoList().stream()
-				.filter(a -> a.getName() == "？")
-				.findAny()
-				.get();
-		for (int i = 0; i < sr.getRoleList().size(); i++) {
-			playerList.add(new Player(i, latent, sr.getRoleSizeMap()));
-		}
-	}
-
-	void criateCogMap() {
-		Map<Role, List<Player>> coPlayerListMap = playerList.stream()
-				.collect(Collectors.groupingBy(Player::getCo));
-
-		for (Role co : coPlayerListMap.keySet()) {
-			if (co.getName() == "？") {
-				latentg = new Latentg(this, co, coPlayerListMap.get(co));
-			} else {
-				Cog cog = new Cog(this, co, coPlayerListMap.get(co));
-				cogMap.put(co, cog);
-				cogList.add(cog);
-			}
-		}
-	}
-
-	void criateAlivePlayerList() {
-		alivePlayerList = playerList.stream()
-				.filter(p -> p.isAlive())
-				.collect(Collectors.toList());
-	}
-
-	public CalcPer getCp() {
-		return cp;
+	
+	void toToJSP() {
+		
 	}
 
 	public List<Player> getPlayerList() {
@@ -213,8 +214,16 @@ public class FaseBoard implements Serializable {
 		return cogList;
 	}
 
-	public List<Player> getLatentPlayerList() {
-		return latentPlayerList;
+	public Map<Role, Integer> getVillsVacantSizeMap() {
+		return villsVacantSizeMap;
+	}
+
+	public int getLatentEvilsSize() {
+		return latentEvilsSize;
+	}
+
+	public Map<Role, Integer> getWwsVacantSizeMap() {
+		return wwsVacantSizeMap;
 	}
 
 	public String getWinner() {
@@ -233,12 +242,12 @@ public class FaseBoard implements Serializable {
 		return alivePlayerList;
 	}
 
-	public int getConfDeadWwsSize() {
-		return confDeadWwsSize;
+	public int getConfAliveVillsIB() {
+		return confAliveVillsIB;
 	}
 
-	public int getConfAliveWwsSize() {
-		return confAliveWwsSize;
+	public int getConfAliveEvilsIB() {
+		return confAliveEvilsIB;
 	}
 
 	public Player getExedPlayer() {
@@ -250,7 +259,7 @@ public class FaseBoard implements Serializable {
 	}
 
 	public float getWwsWinPer() {
-		return wwsWinPer;
+		return evilsWinPer;
 	}
 
 	public static void setSr(SessionRegulation SR) {

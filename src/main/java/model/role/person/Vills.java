@@ -4,7 +4,7 @@ public class Vills extends Role{
 	
 	public Vills() {
 		this.setName("村人team");
-		this.setCamp("vills");
+		this.setCamp("村s");
 	}
 
 }

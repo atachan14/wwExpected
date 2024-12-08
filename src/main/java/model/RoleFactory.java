@@ -17,7 +17,7 @@ public class RoleFactory {
 
     static {
         appRoleMap.put("市民", Villager::new);
-        appRoleMap.put("占い師", Prophet::new);
+        appRoleMap.put("占師", Prophet::new);
         appRoleMap.put("霊能", Medium::new);
         appRoleMap.put("狩人", Hunter::new);
         appRoleMap.put("狂人", Madman::new);

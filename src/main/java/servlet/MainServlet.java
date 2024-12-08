@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import model.logic.CalcPer;
+import model.logic.ToJSP;
 
 /**
  * Servlet implementation class MainServlet
@@ -51,8 +51,8 @@ public class MainServlet extends HttpServlet {
 
 	
 
-	CalcPer getCp(HttpServletRequest request) {
-		return (CalcPer) request.getSession().getAttribute("cp");
+	ToJSP getCp(HttpServletRequest request) {
+		return (ToJSP) request.getSession().getAttribute("cp");
 	}
 
 }

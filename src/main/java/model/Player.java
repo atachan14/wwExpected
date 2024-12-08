@@ -27,7 +27,7 @@ public class Player {
 	float kPer;
 
 	float exedVillsWinPer;
-	float exedWwsPer;
+	float exedWwsWinPer;
 	String outExedPer;
 
 	public Player(int i, Latent latent, Map<Role, Integer> roleSizeMap) {
@@ -36,10 +36,10 @@ public class Player {
 		co = latent;
 		for (Role role : roleSizeMap.keySet()) {
 			switch (role.getCamp()) {
-			case "vills":
+			case "村s":
 				villsTruePerMap.put(role, 0f);
 				break;
-			case "wws":
+			case "狼s":
 				wwsTruePerMap.put(role, 0f);
 				break;
 			}
@@ -99,9 +99,10 @@ public class Player {
 
 	public void setConfRole(Role confRole) {
 		this.confRole = confRole;
+		this.co = confRole;
 		this.truePerMap.put(confRole, 1.0f);
 		this.truePerMap.replaceAll((key, value) -> key.equals(confRole) ? value : 0);
-
+		
 	}
 
 	public float getVillsPer() {
@@ -176,12 +177,12 @@ public class Player {
 		this.exedVillsWinPer = exedVillsWinPer;
 	}
 
-	public float getExedWwsPer() {
-		return exedWwsPer;
+	public float getExedWwsWinPer() {
+		return exedWwsWinPer;
 	}
 
-	public void setExedWwsPer(float exedWwsPer) {
-		this.exedWwsPer = exedWwsPer;
+	public void setExedWwsWinPer(float exedWwsPer) {
+		this.exedWwsWinPer = exedWwsPer;
 	}
 
 	public String getOutExedPer() {
