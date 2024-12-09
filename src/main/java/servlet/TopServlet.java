@@ -35,9 +35,7 @@ public class TopServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
 		request.getRequestDispatcher(PATH_top).forward(request, response);
-		;
 	}
 
 	/**
